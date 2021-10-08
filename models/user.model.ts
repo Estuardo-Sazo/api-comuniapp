@@ -44,7 +44,7 @@ const userSchema = new Schema({
 });
 
 userSchema.method('compararPassword', function (password: string = ''): boolean {
-    if (bcrypt.compareSync(password, this.password)) {
+    if (bcrypt.compareSync(password, this.password: )) {
         return true;
     } else {
         return false;
