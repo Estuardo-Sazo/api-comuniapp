@@ -28,6 +28,10 @@ userRoutes.post('/login', (req, res) => {
                 surnames: userDB.surnames,
                 email: userDB.email,
                 image: userDB.image,
+                type: userDB.type,
+                location: userDB.location,
+                phone: userDB.phone,
+                cui: userDB.cui
             });
             res.json({
                 ok: true,
@@ -63,6 +67,10 @@ userRoutes.post('/create', (req, res) => {
             surnames: userDB.surnames,
             email: userDB.email,
             image: userDB.image,
+            type: userDB.type,
+            location: userDB.location,
+            phone: userDB.phone,
+            cui: userDB.cui
         });
         res.json({
             ok: true,
@@ -84,9 +92,14 @@ userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
         image: req.body.image || req.user.image,
         type: req.body.type || req.user.type
     };
-    user_model_1.User.findOneAndUpdate(req.usuario_id, userUp, { new: true }, (err, userDB) => {
-        if (err)
-            throw err;
+    console.log(req.user);
+    user_model_1.User.findByIdAndUpdate(req.user._id, userUp, { new: true, runValidators: true }, (err, userDB) => {
+        if (err) {
+            res.json({
+                ok: false,
+                Error: err,
+            });
+        }
         if (!userDB) {
             res.json({
                 ok: false,
@@ -99,6 +112,10 @@ userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
             surnames: userDB.surnames,
             email: userDB.email,
             image: userDB.image,
+            type: userDB.type,
+            location: userDB.location,
+            phone: userDB.phone,
+            cui: userDB.cui
         });
         res.json({
             ok: true,
@@ -106,10 +123,12 @@ userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
         });
     });
 });
-userRoutes.get('/', (req, res) => {
+//Obtener USer
+userRoutes.get('/', auth_user_1.verificaToken, (req, res) => {
+    const usuario = req.user;
     res.json({
         ok: true,
-        token: 'HOLA',
+        usuario
     });
 });
 exports.default = userRoutes;

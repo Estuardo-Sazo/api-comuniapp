@@ -25,6 +25,7 @@ mongoose_1.default.connect('mongodb://localhost:27017/comunidb', {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true,
+    useFindAndModify: false,
 }, (err) => {
     if (err)
         throw err;

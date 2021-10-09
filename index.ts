@@ -28,6 +28,7 @@ mongoose.connect('mongodb://localhost:27017/comunidb', {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true,
+    useFindAndModify: false,
 }, (err) => {
     if (err) throw err;
     console.log('Base de datos online!');
