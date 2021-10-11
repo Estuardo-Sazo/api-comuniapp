@@ -16,3 +16,18 @@ export const verificaToken = (req: any, res: Response, next: NextFunction) => {
             });
         });
 }
+
+export const verificaTokenPermis = (req: any, res: Response, next: NextFunction) => {
+    const userToken = req.get('x-token') || '';
+    Token.comprobarToket(userToken).
+        then((decode: any) => {
+            req.typeUser = decode.user.type;
+            next();
+        })
+        .catch(err => {
+            res.json({
+                ok: false,
+                mensaje: "Token incorrect"
+            });
+        });
+}

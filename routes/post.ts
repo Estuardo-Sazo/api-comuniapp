@@ -1,7 +1,7 @@
 import { Router, Response, Request } from "express";
 import { FileUpload } from "../interfaces/file-upload";
 import FileSystem from "../classes/file-system";
-import { verificaToken } from "../middlewares/auth-user";
+import { verificaToken, verificaTokenPermis } from "../middlewares/auth-user";
 import { Post } from "../models/post.model";
 const postRoutes = Router();
 const fileSystem = new FileSystem();
@@ -15,6 +15,7 @@ postRoutes.get('/', async (req: any, res: Response) => {
     let skip = pagina - 1;
     skip *= 10;
 
+    
     const posts = await Post.find()
         .sort({ _id: -1 })
         .skip(skip)
@@ -29,27 +30,36 @@ postRoutes.get('/', async (req: any, res: Response) => {
 });
 
 //? CREAR POST
-postRoutes.post('/', [verificaToken], (req: any, res: Response) => {
-    const body = req.body;
-    body.user = req.user._id;
+postRoutes.post('/', [verificaToken],[verificaTokenPermis], (req: any, res: Response) => {
 
-    const imagenes = fileSystem.imagenesTempPosts(req.user._id);
-    body.imgs = imagenes
-
-    Post.create(body).then(async postDB => {
-
-        await postDB.populate('usuario', '-password').execPopulate(); postRoutes
-
-        res.json({
-            ok: true,
-            post: postDB
-        });
-    }).catch(err => {
+    if(req.typeUser=='USER'){
         res.json({
             ok: false,
-            err
+            message: 'Permisos denegados'
         });
-    });
+    }else{
+        const body = req.body;
+        body.user = req.user._id;
+    
+        const imagenes = fileSystem.imagenesTempPosts(req.user._id);
+        body.imgs = imagenes
+    
+        Post.create(body).then(async postDB => {
+    
+            await postDB.populate('usuario', '-password').execPopulate(); postRoutes
+    
+            res.json({
+                ok: true,
+                post: postDB
+            });
+        }).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
+    
 });
 
 

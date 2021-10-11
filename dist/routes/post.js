@@ -36,24 +36,32 @@ postRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     });
 }));
 //? CREAR POST
-postRoutes.post('/', [auth_user_1.verificaToken], (req, res) => {
-    const body = req.body;
-    body.user = req.user._id;
-    const imagenes = fileSystem.imagenesTempPosts(req.user._id);
-    body.imgs = imagenes;
-    post_model_1.Post.create(body).then((postDB) => __awaiter(void 0, void 0, void 0, function* () {
-        yield postDB.populate('usuario', '-password').execPopulate();
-        postRoutes;
-        res.json({
-            ok: true,
-            post: postDB
-        });
-    })).catch(err => {
+postRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPermis], (req, res) => {
+    if (req.typeUser == 'USER') {
         res.json({
             ok: false,
-            err
+            message: 'Permisos denegados'
         });
-    });
+    }
+    else {
+        const body = req.body;
+        body.user = req.user._id;
+        const imagenes = fileSystem.imagenesTempPosts(req.user._id);
+        body.imgs = imagenes;
+        post_model_1.Post.create(body).then((postDB) => __awaiter(void 0, void 0, void 0, function* () {
+            yield postDB.populate('usuario', '-password').execPopulate();
+            postRoutes;
+            res.json({
+                ok: true,
+                post: postDB
+            });
+        })).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
 });
 //? Servicio de subida de archivos
 postRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
