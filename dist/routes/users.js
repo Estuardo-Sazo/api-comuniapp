@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 const token_1 = __importDefault(require("../classes/token"));
 const auth_user_1 = require("../middlewares/auth-user");
 const userRoutes = (0, express_1.Router)();
-//LOGIN USUARIO
+//* LOGIN USUARIO
 userRoutes.post('/login', (req, res) => {
     const body = req.body;
     user_model_1.User.findOne({ email: body.email }, (err, userDB) => {
@@ -33,6 +33,7 @@ userRoutes.post('/login', (req, res) => {
                 phone: userDB.phone,
                 cui: userDB.cui
             });
+            console.log('--- Login');
             res.json({
                 ok: true,
                 token: tokenUsuario,

@@ -9,7 +9,6 @@ const verificaToken = (req, res, next) => {
     const userToken = req.get('x-token') || '';
     token_1.default.comprobarToket(userToken).
         then((decode) => {
-        console.log('Decode', decode);
         req.user = decode.user;
         next();
     })

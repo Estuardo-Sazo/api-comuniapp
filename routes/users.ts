@@ -6,7 +6,7 @@ import { verificaToken } from "../middlewares/auth-user";
 
 const userRoutes = Router();
 
-//LOGIN USUARIO
+//* LOGIN USUARIO
 userRoutes.post('/login', (req: Request, res: Response) => {
     const body = req.body;
 
@@ -31,6 +31,7 @@ userRoutes.post('/login', (req: Request, res: Response) => {
                 phone: userDB.phone,
                 cui: userDB.cui
             });
+           console.log('--- Login');
            
             res.json({
                 ok: true,
@@ -145,7 +146,7 @@ userRoutes.get('/', verificaToken, (req: any, res: Response) => {
     res.json({
         ok: true,
         usuario
-    })
+    });
 });
 
 export default userRoutes;

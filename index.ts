@@ -4,8 +4,8 @@ import mongoose from 'mongoose';
 
 import cors from 'cors';
 import bodyParser from 'body-parser';
-//import fileupload from 'express-fileupload';
-//import postRoutes from './routes/post';
+import postRoutes from './routes/post';
+import fileupload from 'express-fileupload';
 
 const server = new Server();
 
@@ -14,14 +14,15 @@ server.app.use(bodyParser.urlencoded({ extended: true }));
 server.app.use(bodyParser.json());
 
 //FILEUPLOAD FR
-//server.app.use(fileupload());W
+server.app.use(fileupload());
 
 // configurar cors
 //server.app.use(cors({origin:true, Credential: true}));
 
 /// IMPORTAR RUTAS DE APP
 server.app.use('/user', userRoutes);
-//server.app.use('/posts', postRoutes);
+server.app.use('/posts', postRoutes);
+
 
 //CONECTAR DB
 mongoose.connect('mongodb://localhost:27017/comunidb', {

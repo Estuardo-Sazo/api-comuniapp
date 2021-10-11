@@ -66,4 +66,4 @@ interface IUsuario extends Document {
     compararPassword(password: string): boolean;
 }
 
-export const User = model<IUsuario>('users', userSchema);
+export const User = model<IUsuario>('User', userSchema);
