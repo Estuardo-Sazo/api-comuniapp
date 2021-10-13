@@ -6,6 +6,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import postRoutes from './routes/post';
 import fileupload from 'express-fileupload';
+import typeReportRoutes from './routes/type-report';
+import reportRoutes from './routes/report';
 
 const server = new Server();
 
@@ -17,11 +19,15 @@ server.app.use(bodyParser.json());
 server.app.use(fileupload());
 
 // configurar cors
-//server.app.use(cors({origin:true, Credential: true}));
+server.app.use(cors({origin:true, Credential:true}));
 
 /// IMPORTAR RUTAS DE APP
 server.app.use('/user', userRoutes);
 server.app.use('/posts', postRoutes);
+server.app.use('/type-report', typeReportRoutes);
+server.app.use('/reports', reportRoutes);
+
+
 
 
 //CONECTAR DB

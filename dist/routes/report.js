@@ -13,30 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const file_system_1 = __importDefault(require("../classes/file-system"));
+const file_system_report_1 = __importDefault(require("../classes/file-system-report"));
 const auth_user_1 = require("../middlewares/auth-user");
-const post_model_1 = require("../models/post.model");
-const postRoutes = (0, express_1.Router)();
-const fileSystem = new file_system_1.default();
-//? GET POST
-postRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let pagina = Number(req.query.pagina) || 1;
-    let skip = pagina - 1;
-    skip *= 10;
-    const posts = yield post_model_1.Post.find()
-        .sort({ _id: -1 })
-        .skip(skip)
-        .limit(10)
-        .populate('user', '-password')
-        .exec();
-    res.json({
-        ok: true,
-        pagina,
-        posts
-    });
-}));
-//? CREAR POST
-postRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPermis], (req, res) => {
+const report_model_1 = require("../models/report.model");
+const reportRoutes = (0, express_1.Router)();
+const fileSystem = new file_system_report_1.default();
+//? CREAR  Report
+reportRoutes.post('/', [auth_user_1.verificaToken], (req, res) => {
+    console.log('POST: REPORT');
     if (req.typeUser == 'USER') {
         res.json({
             ok: false,
@@ -46,13 +30,13 @@ postRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPerm
     else {
         const body = req.body;
         body.user = req.user._id;
-        const imagenes = fileSystem.imagenesTempPosts(req.user._id);
+        const imagenes = fileSystem.imagenesTempReport(req.user._id);
         body.imgs = imagenes;
-        post_model_1.Post.create(body).then((postDB) => __awaiter(void 0, void 0, void 0, function* () {
-            yield postDB.populate('usuario', '-password').execPopulate();
+        report_model_1.Report.create(body).then((dataDB) => __awaiter(void 0, void 0, void 0, function* () {
+            yield dataDB.populate('user', '-password').populate('type').execPopulate();
             res.json({
                 ok: true,
-                post: postDB
+                report: dataDB
             });
         })).catch(err => {
             res.json({
@@ -62,8 +46,9 @@ postRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPerm
         });
     }
 });
-//? Servicio de subida de archivos
-postRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+//? UPLOAD IMAGES
+reportRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('POST: UPLOAD IMG REPORT');
     if (!req.files) {
         return res.status(400).json({
             ok: false,
@@ -89,11 +74,12 @@ postRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(
         file: file.mimetype
     });
 }));
-//? mostrarimages
-postRoutes.get('/imagen/:userId/:img', (req, res) => {
+//? GET IMAGE REPORT
+reportRoutes.get('/image/:userId/:img', (req, res) => {
+    console.log('GET:  IMG REPORT');
     const userId = req.params.userId;
     const img = req.params.img;
     const pathImg = fileSystem.getFotoUrl(userId, img);
     res.sendFile(pathImg);
 });
-exports.default = postRoutes;
+exports.default = reportRoutes;

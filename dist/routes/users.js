@@ -93,7 +93,6 @@ userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
         image: req.body.image || req.user.image,
         type: req.body.type || req.user.type
     };
-    console.log(req.user);
     user_model_1.User.findByIdAndUpdate(req.user._id, userUp, { new: true, runValidators: true }, (err, userDB) => {
         if (err) {
             res.json({

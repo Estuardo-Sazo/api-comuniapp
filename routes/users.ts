@@ -100,7 +100,6 @@ userRoutes.post('/update', verificaToken, (req: any, res: Response) => {
         image: req.body.image || req.user.image,
         type: req.body.type || req.user.type
     };
-    console.log(req.user);
     
   
 

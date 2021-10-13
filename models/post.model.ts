@@ -21,6 +21,7 @@ const postSchema = new Schema({
         required: [true, 'Debe existir una referecnia a un usuario']
     }
 });
+
 postSchema.pre<IPost>('save', function (next) {
     this.created = new Date();
     next();

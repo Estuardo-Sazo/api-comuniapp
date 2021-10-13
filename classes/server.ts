@@ -7,7 +7,6 @@ export default class Server {
     constructor() {
         this.app = express();
     }
-
     start(callback: ()=>void) {
         this.app.listen(this.port, callback);
     }
