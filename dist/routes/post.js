@@ -49,7 +49,7 @@ postRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPerm
         const imagenes = fileSystem.imagenesTempPosts(req.user._id);
         body.imgs = imagenes;
         post_model_1.Post.create(body).then((postDB) => __awaiter(void 0, void 0, void 0, function* () {
-            yield postDB.populate('usuario', '-password').execPopulate();
+            yield postDB.populate('user', '-password').execPopulate();
             res.json({
                 ok: true,
                 post: postDB
