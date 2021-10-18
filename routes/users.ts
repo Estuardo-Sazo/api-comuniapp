@@ -178,18 +178,24 @@ userRoutes.post('/upload', [verificaToken], async (req: any, res: Response) => {
     }
 
     const path =await fileSystem.guardarImageProfile(file, req.user._id);
-    res.status(200).json({
-        ok: true,
-        image: path
-    });
+    const userId = req.params._id;
+
+    console.log(path);
+    console.log('USER ID :', userId);
+    
+    res.status(200).send(
+       path
+    );
 
 });
 
 //? GET IMAGE REPORT
 userRoutes.get('/image/:userId/:img', (req: any, res: Response) => {
     console.log('GET:  IMG PROFILE');
-
+    
+    
     const userId = req.params.userId;
+    console.log('USER ID :', userId);
     const img = req.params.img;
     const pathImg = fileSystem.getFotoUrl(userId, img);
 

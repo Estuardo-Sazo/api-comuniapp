@@ -21,7 +21,13 @@ const postSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
         required: [true, 'Debe existir una referecnia a un usuario']
-    }
+    },
+    likes: [{
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: 'User',
+            required: [true, 'Debe existir una referecnia a un usuario'],
+            unique: true,
+        }]
 });
 postSchema.pre('save', function (next) {
     this.created = new Date();

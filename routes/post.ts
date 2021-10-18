@@ -105,5 +105,42 @@ postRoutes.get('/imagen/:userId/:img', (req: any, res: Response) => {
     res.sendFile(pathImg);
 });
 
+//! POSST LIKE
+postRoutes.post('/:postId/like', [verificaToken], async (req: any, res: Response) => {
+    const postId = req.params.postId;
+    const userId= req.user._id;
+    const likeIs = await Post.find({likes:userId}).exec();
+
+    if(likeIs.length>0){
+        res.json({
+            ok: false,
+            erro:'Is liked'
+            
+        });
+    }else{
+        Post.findByIdAndUpdate({_id: postId}, {$push: {likes: userId}}, { new: true, runValidators: true}, (err: any, postDB: any) => {
+            if (err) {
+                res.json({
+                    ok: false,
+                    Error: err,
+                });
+            }
+            if (!postDB) {
+                res.json({
+                    ok: false,
+                    token: 'No existe un post',
+                });
+            }
+            
+            res.json({
+                ok: true,
+                post: postDB,
+            });
+    
+        });
+    }
+    
+});
+
 
 export default postRoutes;

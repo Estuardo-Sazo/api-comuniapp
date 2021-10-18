@@ -19,7 +19,13 @@ const postSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: [true, 'Debe existir una referecnia a un usuario']
-    }
+    },
+    likes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'Debe existir una referecnia a un usuario'],
+        unique: true,
+    }]
 });
 
 postSchema.pre<IPost>('save', function (next) {
