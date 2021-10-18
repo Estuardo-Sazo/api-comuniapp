@@ -1,14 +1,25 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const user_model_1 = require("../models/user.model");
+const imag_profile_1 = __importDefault(require("../classes/imag-profile"));
 const bcrypt = require("bcrypt");
 const token_1 = __importDefault(require("../classes/token"));
 const auth_user_1 = require("../middlewares/auth-user");
 const userRoutes = (0, express_1.Router)();
+const fileSystem = new imag_profile_1.default();
 //* LOGIN USUARIO
 userRoutes.post('/login', (req, res) => {
     const body = req.body;
@@ -131,4 +142,32 @@ userRoutes.get('/', auth_user_1.verificaToken, (req, res) => {
         usuario
     });
 });
+//? UPDATE IMAGE PROFILE
+userRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('POST: UPLOAD IMG PROFILE');
+    if (!req.files) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: "No subió ningun archivo"
+        });
+    }
+    const file = req.files.image;
+    if (!file) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: "No subió ningun archivo- imagen"
+        });
+    }
+    if (!file.mimetype.includes('image')) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: "No subió una imagen"
+        });
+    }
+    const path = yield fileSystem.guardarImageProfile(file, req.user._id);
+    res.status(200).json({
+        ok: true,
+        image: path
+    });
+}));
 exports.default = userRoutes;

@@ -19,9 +19,17 @@ const report_model_1 = require("../models/report.model");
 const reportRoutes = (0, express_1.Router)();
 const fileSystem = new file_system_report_1.default();
 //? GET Reports
+reportRoutes.get('/:id', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const report = yield report_model_1.Report.find({ _id: id }).populate('user', '-password').populate('type').exec();
+    res.json({
+        ok: true,
+        report
+    });
+}));
+//? GET Reports
 reportRoutes.get('/', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.user._id;
-    console.log(id);
     const reports = yield report_model_1.Report.find({ user: id })
         .sort({ _id: -1 })
         .populate('user', '-password')

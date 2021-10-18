@@ -9,11 +9,23 @@ const fileSystem = new FileSystemReport();
 
 //? GET Reports
 
+reportRoutes.get('/:id',[verificaToken], async (req: any, res: Response) => {
+    const id= req.params.id;
+
+    
+    const report = await Report.find({_id:id}).populate('user', '-password').populate('type').exec();
+        res.json({
+        ok: true,
+        report
+    });
+});
+
+//? GET Reports
+
 reportRoutes.get('/',[verificaToken], async (req: any, res: Response) => {
 
     const id= req.user._id;
   
-    console.log(id);
     
     const reports = await Report.find({user:id})
         .sort({ _id: -1 })

@@ -1,10 +1,13 @@
 import { Router, Request, Response } from "express";
 import { User } from "../models/user.model";
+import { FileUpload } from "../interfaces/file-upload";
+import FileSystemProfile from "../classes/imag-profile";
 import bcrypt = require("bcrypt");
 import Token from "../classes/token";
 import { verificaToken } from "../middlewares/auth-user"; 
 
 const userRoutes = Router();
+const fileSystem = new FileSystemProfile();
 
 //* LOGIN USUARIO
 userRoutes.post('/login', (req: Request, res: Response) => {
@@ -100,8 +103,7 @@ userRoutes.post('/update', verificaToken, (req: any, res: Response) => {
         image: req.body.image || req.user.image,
         type: req.body.type || req.user.type
     };
-    
-  
+     
 
     User.findByIdAndUpdate(req.user._id, userUp, { new: true, runValidators: true}, (err: any, userDB: any) => {
         if (err) {
@@ -147,5 +149,41 @@ userRoutes.get('/', verificaToken, (req: any, res: Response) => {
         usuario
     });
 });
+
+//? UPDATE IMAGE PROFILE
+userRoutes.post('/upload', [verificaToken], async (req: any, res: Response) => {
+    
+    console.log('POST: UPLOAD IMG PROFILE');
+
+
+    if (!req.files) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: "No subió ningun archivo"
+        });
+    }
+
+    const file: FileUpload = req.files.image;
+    if (!file) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: "No subió ningun archivo- imagen"
+        });
+    }
+    if (!file.mimetype.includes('image')) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: "No subió una imagen"
+        });
+    }
+
+    const path =await fileSystem.guardarImageProfile(file, req.user._id);
+    res.status(200).json({
+        ok: true,
+        image: path
+    });
+
+});
+
 
 export default userRoutes;
