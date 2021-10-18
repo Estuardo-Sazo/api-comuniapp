@@ -185,5 +185,16 @@ userRoutes.post('/upload', [verificaToken], async (req: any, res: Response) => {
 
 });
 
+//? GET IMAGE REPORT
+userRoutes.get('/image/:userId/:img', (req: any, res: Response) => {
+    console.log('GET:  IMG PROFILE');
+
+    const userId = req.params.userId;
+    const img = req.params.img;
+    const pathImg = fileSystem.getFotoUrl(userId, img);
+
+    res.sendFile(pathImg);
+});
+
 
 export default userRoutes;

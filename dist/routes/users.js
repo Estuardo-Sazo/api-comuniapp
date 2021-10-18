@@ -170,4 +170,12 @@ userRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(
         image: path
     });
 }));
+//? GET IMAGE REPORT
+userRoutes.get('/image/:userId/:img', (req, res) => {
+    console.log('GET:  IMG PROFILE');
+    const userId = req.params.userId;
+    const img = req.params.img;
+    const pathImg = fileSystem.getFotoUrl(userId, img);
+    res.sendFile(pathImg);
+});
 exports.default = userRoutes;
