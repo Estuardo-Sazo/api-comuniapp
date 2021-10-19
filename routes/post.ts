@@ -106,21 +106,24 @@ postRoutes.get('/imagen/:userId/:img', (req: any, res: Response) => {
 });
 
 //! POSST LIKE
-postRoutes.post('/:postId/like', [verificaToken], async (req: any, res: Response) => {
+postRoutes.get('/:postId/like', [verificaToken], async (req: any, res: Response) => {
     const postId = req.params.postId;
-    const userId= req.user._id;
-    const likeIs = await Post.find({likes:userId}).exec();
+    console.log('POST ID:',postId);
 
+    const userId= req.user._id;
+    const likeIs = await Post.find({$and:[{_id:postId},{likes:userId}]}).exec();
+    
     if(likeIs.length>0){
         res.json({
             ok: false,
-            erro:'Is liked'
+            erro:'Is liked',
+            postId
             
         });
     }else{
         Post.findByIdAndUpdate({_id: postId}, {$push: {likes: userId}}, { new: true, runValidators: true}, (err: any, postDB: any) => {
             if (err) {
-                res.json({
+                res.json({                    
                     ok: false,
                     Error: err,
                 });
@@ -134,6 +137,43 @@ postRoutes.post('/:postId/like', [verificaToken], async (req: any, res: Response
             
             res.json({
                 ok: true,
+                post: postDB,
+            });
+    
+        });
+    }
+    
+});
+
+//! POSST DISLIKE
+postRoutes.get('/:postId/dislike', [verificaToken], async (req: any, res: Response) => {
+    const postId = req.params.postId;
+    const userId= req.user._id;
+    const likeIs = await Post.find({likes:userId}).exec();
+    if(likeIs.length===0){
+        res.json({
+            ok: false,
+            erro:'Desliked'
+            
+        });
+    }else{
+        Post.findByIdAndUpdate({_id: postId}, {$pull: {likes: userId}}, { new: true, runValidators: true}, (err: any, postDB: any) => {
+            if (err) {
+                res.json({                    
+                    ok: false,
+                    Error: err,
+                });
+            }
+            if (!postDB) {
+                res.json({
+                    ok: false,
+                    token: 'No existe un post',
+                });
+            }
+            
+            res.json({
+                ok: true,
+                message:'liked',
                 post: postDB,
             });
     

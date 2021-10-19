@@ -97,14 +97,16 @@ postRoutes.get('/imagen/:userId/:img', (req, res) => {
     res.sendFile(pathImg);
 });
 //! POSST LIKE
-postRoutes.post('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.postId;
+    console.log('POST ID:', postId);
     const userId = req.user._id;
-    const likeIs = yield post_model_1.Post.find({ likes: userId }).exec();
+    const likeIs = yield post_model_1.Post.find({ $and: [{ _id: postId }, { likes: userId }] }).exec();
     if (likeIs.length > 0) {
         res.json({
             ok: false,
-            erro: 'Is liked'
+            erro: 'Is liked',
+            postId
         });
     }
     else {
@@ -123,6 +125,39 @@ postRoutes.post('/:postId/like', [auth_user_1.verificaToken], (req, res) => __aw
             }
             res.json({
                 ok: true,
+                post: postDB,
+            });
+        });
+    }
+}));
+//! POSST DISLIKE
+postRoutes.get('/:postId/dislike', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const postId = req.params.postId;
+    const userId = req.user._id;
+    const likeIs = yield post_model_1.Post.find({ likes: userId }).exec();
+    if (likeIs.length === 0) {
+        res.json({
+            ok: false,
+            erro: 'Desliked'
+        });
+    }
+    else {
+        post_model_1.Post.findByIdAndUpdate({ _id: postId }, { $pull: { likes: userId } }, { new: true, runValidators: true }, (err, postDB) => {
+            if (err) {
+                res.json({
+                    ok: false,
+                    Error: err,
+                });
+            }
+            if (!postDB) {
+                res.json({
+                    ok: false,
+                    token: 'No existe un post',
+                });
+            }
+            res.json({
+                ok: true,
+                message: 'liked',
                 post: postDB,
             });
         });

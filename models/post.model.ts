@@ -23,7 +23,6 @@ const postSchema = new Schema({
     likes: [{
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: [true, 'Debe existir una referecnia a un usuario'],
         unique: true,
     }]
 });

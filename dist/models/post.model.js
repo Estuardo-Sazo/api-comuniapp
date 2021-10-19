@@ -25,7 +25,6 @@ const postSchema = new mongoose_1.Schema({
     likes: [{
             type: mongoose_1.Schema.Types.ObjectId,
             ref: 'User',
-            required: [true, 'Debe existir una referecnia a un usuario'],
             unique: true,
         }]
 });
