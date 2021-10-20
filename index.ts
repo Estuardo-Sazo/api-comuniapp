@@ -8,6 +8,7 @@ import postRoutes from './routes/post';
 import fileupload from 'express-fileupload';
 import typeReportRoutes from './routes/type-report';
 import reportRoutes from './routes/report';
+import commentRoutes from './routes/comment'
 
 const server = new Server();
 
@@ -26,6 +27,8 @@ server.app.use('/user', userRoutes);
 server.app.use('/posts', postRoutes);
 server.app.use('/type-report', typeReportRoutes);
 server.app.use('/reports', reportRoutes);
+server.app.use('/comments', commentRoutes);
+
 
 
 

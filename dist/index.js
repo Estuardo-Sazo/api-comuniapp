@@ -12,6 +12,7 @@ const post_1 = __importDefault(require("./routes/post"));
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const type_report_1 = __importDefault(require("./routes/type-report"));
 const report_1 = __importDefault(require("./routes/report"));
+const comment_1 = __importDefault(require("./routes/comment"));
 const server = new server_1.default();
 // BODY PARSER FRM ENCODE
 server.app.use(body_parser_1.default.urlencoded({ extended: true }));
@@ -25,6 +26,7 @@ server.app.use('/user', users_1.default);
 server.app.use('/posts', post_1.default);
 server.app.use('/type-report', type_report_1.default);
 server.app.use('/reports', report_1.default);
+server.app.use('/comments', comment_1.default);
 //CONECTAR DB
 mongoose_1.default.connect('mongodb://localhost:27017/comunidb', {
     useUnifiedTopology: true,
