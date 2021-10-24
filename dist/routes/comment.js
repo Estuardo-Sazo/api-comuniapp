@@ -54,7 +54,7 @@ commentRoutes.post('/delete/:id', [auth_user_1.verificaToken], (req, res) => {
         if (!commenetDB) {
             res.json({
                 ok: false,
-                token: 'No existe un usuario',
+                token: 'No existe un Comentario',
             });
         }
         res.json({

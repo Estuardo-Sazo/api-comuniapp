@@ -24,16 +24,24 @@ reportRoutes.get('/:id',[verificaToken], async (req: any, res: Response) => {
 
 reportRoutes.get('/',[verificaToken], async (req: any, res: Response) => {
 
-    const id= req.user._id;
-  
+    let pagina = Number(req.query.pagina) || 1;
+    let skip = pagina - 1;
+    skip *= 10;
     
-    const reports = await Report.find({user:id})
+    const id= req.user._id;
+    const filter=req.user.type==='USER'?{ $and: [{ user:id }, { status: 'ACTIVE' }] }:{ status: 'ACTIVE'};
+    console.log('GET REPORT USER: ',req.user.type)
+
+    const reports = await Report.find(filter)
         .sort({ _id: -1 })
+        .skip(skip)
+        .limit(10)
         .populate('user', '-password')
         .populate('type')
         .exec();
     res.json({
         ok: true,
+        pagina,
         reports
     });
 });
@@ -116,5 +124,31 @@ reportRoutes.get('/image/:userId/:img', (req: any, res: Response) => {
     res.sendFile(pathImg);
 });
 
+//? INANCTIVE COMENT
+
+reportRoutes.post('/delete/:id', [verificaToken], (req: any, res: Response) => {
+    console.log('POST:  INACTIVE REPORT');
+    const id = req.params.id;
+    
+    Report.findByIdAndUpdate({ _id: id }, { status: 'INACTIVE' }, { new: true, runValidators: true }, (err: any, report: any) => {
+        if (err) {
+            res.json({
+                ok: false,
+                Error: err,
+            });
+        }
+        if (!report) {
+            res.json({
+                ok: false,
+                token: 'No existe un reporte',
+            });
+        }
+
+        res.json({
+            ok: true,
+            report: report,
+        });
+    });
+});
 
 export default reportRoutes;

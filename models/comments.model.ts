@@ -36,6 +36,7 @@ interface IComment extends Document {
     comment: string;
     user: string;
     status?: string;
+    reference: string;
 }
 
 export const Comment = model<IComment>('Comment', commentSchema);
