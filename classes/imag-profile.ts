@@ -14,7 +14,8 @@ export default class FileSystemProfile {
 
             //CREAR CARPETA
             const path = this.crearCarpetaUser(userId);
-
+            console.log('PATHÑ:',path);
+            
             //Nombre de archivo
             const nombreArchivo = this.generarNombreUnico(file.name);
 

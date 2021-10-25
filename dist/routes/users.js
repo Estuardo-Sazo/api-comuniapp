@@ -165,7 +165,7 @@ userRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(
         });
     }
     const path = yield fileSystem.guardarImageProfile(file, req.user._id);
-    const userId = req.params._id;
+    const userId = req.user._id;
     console.log(path);
     console.log('USER ID :', userId);
     res.status(200).send(path);

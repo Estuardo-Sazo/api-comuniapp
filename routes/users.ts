@@ -178,8 +178,8 @@ userRoutes.post('/upload', [verificaToken], async (req: any, res: Response) => {
     }
 
     const path =await fileSystem.guardarImageProfile(file, req.user._id);
-    const userId = req.params._id;
-
+    const userId = req.user._id
+    
     console.log(path);
     console.log('USER ID :', userId);
     
