@@ -38,6 +38,7 @@ interface IPost extends Document {
     message: string;
     imgs?: string[];
     user: string;
+    likes?: string[];
     status?: string;
 }
 

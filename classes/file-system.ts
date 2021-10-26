@@ -38,11 +38,15 @@ export default class FileSystem {
         const pathTemp = pathUser + '/temp';
 
         const existe = fs.existsSync(pathUser);
+        const existeTemp = fs.existsSync(pathTemp);
+
         if (!existe) {
             fs.mkdirSync(pathUser);
             fs.mkdirSync(pathTemp);
         }
-
+        if (!existeTemp) {
+            fs.mkdirSync(pathTemp);
+        }
         return pathTemp;
 
     }
