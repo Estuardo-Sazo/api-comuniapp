@@ -4,7 +4,7 @@ import { FileUpload } from "../interfaces/file-upload";
 import FileSystemProfile from "../classes/imag-profile";
 import bcrypt = require("bcrypt");
 import Token from "../classes/token";
-import { verificaToken } from "../middlewares/auth-user"; 
+import { verificaToken,verificaTokenPermis } from "../middlewares/auth-user"; 
 
 const userRoutes = Router();
 const fileSystem = new FileSystemProfile();
@@ -19,6 +19,52 @@ userRoutes.post('/login', (req: Request, res: Response) => {
             return res.json({
                 ok: false,
                 mensaje: "Usuario/Contraseña son incorrectos"
+            });
+        }
+
+        if (userDB.compararPassword(body.password)) {
+            const tokenUsuario = Token.getJwtToken({
+                _id: userDB._id,
+                names: userDB.names,
+                surnames: userDB.surnames,
+                email: userDB.email,
+                image: userDB.image,
+                type: userDB.type,
+                location: userDB.location,
+                phone: userDB.phone,
+                cui: userDB.cui
+            });
+           console.log('--- Login');
+           
+            res.json({
+                ok: true,
+                token: tokenUsuario,
+            });
+        } else {
+            return res.json({
+                ok: false,
+                mensaje: "Usuario/Contraseña son incorrectos "
+            });
+        }
+
+    })
+});
+
+userRoutes.post('/login-ad', (req: Request, res: Response) => {
+    const body = req.body;
+
+    User.findOne({ email: body.email }, (err: any, userDB: any) => {
+        if (err) throw err;
+        if (!userDB) {
+            return res.json({
+                ok: false,
+                mensaje: "Usuario/Contraseña son incorrectos"
+            });
+        }
+        if(userDB.type!='ADMIN'){
+            return res.json({
+                ok: false,
+                mensaje: "Usuario Incorrecto"
             });
         }
 
@@ -65,7 +111,6 @@ userRoutes.post('/create', (req: Request, res: Response) => {
        
     };
 
-    console.log(user);
     
     User.create(user).then(userDB => {
         const tokenUsuario = Token.getJwtToken({
@@ -150,6 +195,24 @@ userRoutes.get('/', verificaToken, (req: any, res: Response) => {
     });
 });
 
+
+//Obtener USers
+userRoutes.get('/get',[verificaTokenPermis], async (req: any, res: Response) => {
+    if(req.typeUser=='USER'){
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }else{        
+        const users = await User.find()
+        .sort({ _id: -1 })
+        .exec();
+        res.json({
+            ok: true,
+            users
+        });
+    }
+});
 //? UPDATE IMAGE PROFILE
 userRoutes.post('/upload', [verificaToken], async (req: any, res: Response) => {
     

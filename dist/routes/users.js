@@ -58,6 +58,49 @@ userRoutes.post('/login', (req, res) => {
         }
     });
 });
+userRoutes.post('/login-ad', (req, res) => {
+    const body = req.body;
+    user_model_1.User.findOne({ email: body.email }, (err, userDB) => {
+        if (err)
+            throw err;
+        if (!userDB) {
+            return res.json({
+                ok: false,
+                mensaje: "Usuario/Contraseña son incorrectos"
+            });
+        }
+        if (userDB.type != 'ADMIN') {
+            return res.json({
+                ok: false,
+                mensaje: "Usuario Incorrecto"
+            });
+        }
+        if (userDB.compararPassword(body.password)) {
+            const tokenUsuario = token_1.default.getJwtToken({
+                _id: userDB._id,
+                names: userDB.names,
+                surnames: userDB.surnames,
+                email: userDB.email,
+                image: userDB.image,
+                type: userDB.type,
+                location: userDB.location,
+                phone: userDB.phone,
+                cui: userDB.cui
+            });
+            console.log('--- Login');
+            res.json({
+                ok: true,
+                token: tokenUsuario,
+            });
+        }
+        else {
+            return res.json({
+                ok: false,
+                mensaje: "Usuario/Contraseña son incorrectos "
+            });
+        }
+    });
+});
 //TODO: Create User
 userRoutes.post('/create', (req, res) => {
     const user = {
@@ -71,7 +114,6 @@ userRoutes.post('/create', (req, res) => {
         password: bcrypt.hashSync(req.body.password, 10),
         type: req.body.type
     };
-    console.log(user);
     user_model_1.User.create(user).then(userDB => {
         const tokenUsuario = token_1.default.getJwtToken({
             _id: userDB._id,
@@ -142,6 +184,24 @@ userRoutes.get('/', auth_user_1.verificaToken, (req, res) => {
         usuario
     });
 });
+//Obtener USers
+userRoutes.get('/get', [auth_user_1.verificaTokenPermis], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.typeUser == 'USER') {
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }
+    else {
+        const users = yield user_model_1.User.find()
+            .sort({ _id: -1 })
+            .exec();
+        res.json({
+            ok: true,
+            users
+        });
+    }
+}));
 //? UPDATE IMAGE PROFILE
 userRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('POST: UPLOAD IMG PROFILE');
