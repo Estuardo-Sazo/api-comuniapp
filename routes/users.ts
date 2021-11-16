@@ -13,7 +13,7 @@ const fileSystem = new FileSystemProfile();
 userRoutes.post('/login', (req: Request, res: Response) => {
     const body = req.body;
 
-    User.findOne({ email: body.email }, (err: any, userDB: any) => {
+    User.findOne({ $or:[{email: body.email },{cui:body.email}]}, (err: any, userDB: any) => {
         if (err) throw err;
         if (!userDB) {
             return res.json({

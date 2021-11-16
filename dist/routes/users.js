@@ -23,7 +23,7 @@ const fileSystem = new imag_profile_1.default();
 //* LOGIN USUARIO
 userRoutes.post('/login', (req, res) => {
     const body = req.body;
-    user_model_1.User.findOne({ email: body.email }, (err, userDB) => {
+    user_model_1.User.findOne({ $or: [{ email: body.email }, { cui: body.email }] }, (err, userDB) => {
         if (err)
             throw err;
         if (!userDB) {
