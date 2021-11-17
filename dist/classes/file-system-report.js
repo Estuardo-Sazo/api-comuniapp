@@ -72,7 +72,7 @@ class FileSystemReport {
         //img existe
         const existe = fs_1.default.existsSync(pathFoto);
         if (!existe) {
-            return path_1.default.resolve(__dirname, '../assets/400x250.jpg');
+            return path_1.default.resolve(__dirname, '../assets/400x250.png');
         }
         return pathFoto;
     }
