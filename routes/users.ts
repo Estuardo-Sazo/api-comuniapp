@@ -236,8 +236,8 @@ userRoutes.post('/list',[verificaTokenPermis], async (req: any, res: Response) =
 
 //? Obtener USers for search
 userRoutes.get('/search/:search', async (req: any, res: Response) => {
-    const search = req.params.search;
-        const users = await User.find({$or:[{ names:/search/ },{ surnames:/search/}]})
+    const search = req.params.search;-
+        const users = await User.find({$or:[{ names:"/"+search+"/" },{ surnames:"/"+search+"/"}]})
                                 .exec();
         res.json({
             ok: true,
