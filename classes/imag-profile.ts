@@ -68,7 +68,7 @@ export default class FileSystemProfile {
         //img existe
         const existe = fs.existsSync(pathFoto);
         if (!existe) {
-            return path.resolve(__dirname, '../assets/400x250.jpg')
+            return path.resolve(__dirname, '../assets/400x250.png')
         }
 
         return pathFoto;
