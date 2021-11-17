@@ -213,6 +213,39 @@ userRoutes.get('/get',[verificaTokenPermis], async (req: any, res: Response) => 
         });
     }
 });
+
+
+//Obtener USers for type
+userRoutes.post('/list',[verificaTokenPermis], async (req: any, res: Response) => {
+    if(req.typeUser!='ADMIN'){
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }else{     
+        const type = req.body.type;   
+        const users = await User.find({ type })
+                                .exec();
+        res.json({
+            ok: true,
+            users
+        });
+    }
+});
+
+
+//? Obtener USers for search
+userRoutes.get('/search/:search', async (req: any, res: Response) => {
+    const search = req.params.search;
+        const users = await User.find({$or:[{ names:/search/ },{ surnames:/search/}]})
+                                .exec();
+        res.json({
+            ok: true,
+            users
+        });
+    
+});
+
 //? UPDATE IMAGE PROFILE
 userRoutes.post('/upload', [verificaToken], async (req: any, res: Response) => {
     

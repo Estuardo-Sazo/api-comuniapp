@@ -202,6 +202,34 @@ userRoutes.get('/get', [auth_user_1.verificaTokenPermis], (req, res) => __awaite
         });
     }
 }));
+//Obtener USers for type
+userRoutes.post('/list', [auth_user_1.verificaTokenPermis], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.typeUser != 'ADMIN') {
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }
+    else {
+        const type = req.body.type;
+        const users = yield user_model_1.User.find({ type })
+            .exec();
+        res.json({
+            ok: true,
+            users
+        });
+    }
+}));
+//? Obtener USers for search
+userRoutes.get('/search/:search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const search = req.params.search;
+    const users = yield user_model_1.User.find({ $or: [{ names: /search/ }, { surnames: /search/ }] })
+        .exec();
+    res.json({
+        ok: true,
+        users
+    });
+}));
 //? UPDATE IMAGE PROFILE
 userRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('POST: UPLOAD IMG PROFILE');
