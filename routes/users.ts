@@ -239,8 +239,7 @@ userRoutes.get('/search/:search', async (req: any, res: Response) => {
     const search = req.params.search;
     console.log('SEARCH: ',search);
     
-        const users = await User.find({$or:[{ names:"/"+search+"/" },{ surnames:"/"+search+"/"}]})
-                                .exec();
+    const users = await User.find({ $or: [{ names: "/.*" + search + ".*/" }, { surnames: "/.*" + search + ".*/" }] });
         res.json({
             ok: true,
             users

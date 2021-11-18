@@ -224,8 +224,7 @@ userRoutes.post('/list', [auth_user_1.verificaTokenPermis], (req, res) => __awai
 userRoutes.get('/search/:search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const search = req.params.search;
     console.log('SEARCH: ', search);
-    const users = yield user_model_1.User.find({ $or: [{ names: "/" + search + "/" }, { surnames: "/" + search + "/" }] })
-        .exec();
+    const users = yield user_model_1.User.find({ $or: [{ names: "/.*" + search + ".*/" }, { surnames: "/.*" + search + ".*/" }] });
     res.json({
         ok: true,
         users
