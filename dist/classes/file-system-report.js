@@ -23,7 +23,7 @@ class FileSystemReport {
                     reject(err);
                 }
                 else {
-                    resolve();
+                    resolve(nombreArchivo);
                 }
             });
         });

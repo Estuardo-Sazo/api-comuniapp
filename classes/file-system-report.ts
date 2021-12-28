@@ -24,11 +24,10 @@ export default class FileSystemReport {
                     //No se pudo mover
                     reject(err);
                 } else {
-                    resolve();
+                    resolve(nombreArchivo);
                 }
             });
         });
-
     }
 
 
@@ -63,6 +62,7 @@ export default class FileSystemReport {
     imagenesTempReport(userId: string) {
         const pathTemp = path.resolve(__dirname, '../uploads/', userId, 'tempReport');
         const pathReport = path.resolve(__dirname, '../uploads/', userId, 'reports');
+        
         if (!fs.existsSync(pathTemp)) {
             return [];
         }

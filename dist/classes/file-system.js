@@ -23,10 +23,12 @@ class FileSystem {
                     reject(err);
                 }
                 else {
-                    resolve();
+                    resolve(nombreArchivo);
                 }
             });
         });
+        const pathUser = path_1.default.resolve(__dirname, '../uploads/', userId);
+        const pathTemp = pathUser + '/temp';
     }
     crearCarpetaUser(userId) {
         const pathUser = path_1.default.resolve(__dirname, '../uploads/', userId);

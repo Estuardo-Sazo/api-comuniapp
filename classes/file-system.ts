@@ -5,7 +5,7 @@ import uniqid from "uniqid";
 
 export default class FileSystem {
     constructor() {
-
+       
     };
 
     guardarImageTemp(file: FileUpload, userId: string) {
@@ -24,11 +24,12 @@ export default class FileSystem {
                     //No se pudo mover
                     reject(err);
                 } else {
-                    resolve();
+                    resolve(nombreArchivo);
                 }
             });
         });
-
+        const pathUser = path.resolve(__dirname, '../uploads/', userId);
+        const pathTemp = pathUser + '/temp';
 
     }
 
