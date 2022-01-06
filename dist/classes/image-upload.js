@@ -64,9 +64,25 @@ class ImageUpload {
         });
         return filesTemp;
     }
+    deleteFilfeFolderTemp(userId) {
+        const pathTemp = path_1.default.resolve(__dirname, '../uploads/', userId, 'temp');
+        if (!fs_1.default.existsSync(pathTemp)) {
+            return 'Not Files';
+        }
+        const filesTemp = this.getFilesTempFolder(pathTemp);
+        // Move Folder Files
+        filesTemp.forEach(img => {
+            //fs.renameSync(`${pathTemp}/${img}`, `${pathOriginal}/${img}`)
+            fs_1.default.unlink(`${pathTemp}/${img}`, (err => {
+                console.log(err);
+            }));
+        });
+        return 'Delete Files Temp';
+    }
     getUrlFile(userId, img, folder) {
         const urlFile = path_1.default.resolve(__dirname, '../uploads', userId, folder, img);
         const exist = fs_1.default.existsSync(urlFile);
+        console.log(exist);
         if (!exist) {
             return path_1.default.resolve(__dirname, '../assets/400x250.png');
         }

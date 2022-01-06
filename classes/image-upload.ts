@@ -75,9 +75,28 @@ export default class ImageUpload {
         return filesTemp;
     }
 
+    deleteFilfeFolderTemp(userId: string){
+        const pathTemp = path.resolve(__dirname, '../uploads/', userId, 'temp');
+        if (!fs.existsSync(pathTemp)) {
+            return 'Not Files';
+        }
+        const filesTemp = this.getFilesTempFolder(pathTemp);
+        
+        filesTemp.forEach(img => {
+            // Delete files
+            fs.unlink(`${pathTemp}/${img}`,(err=>{
+                console.log(err);
+            }));
+        });
+            
+        return 'Delete Files Temp';
+    }
+
     getUrlFile(userId: string, img: string, folder: string){
         const urlFile = path.resolve(__dirname, '../uploads', userId, folder, img);
         const exist = fs.existsSync(urlFile);
+        console.log(exist);
+        
         if (!exist) {
             return path.resolve(__dirname, '../assets/400x250.png')
         }
