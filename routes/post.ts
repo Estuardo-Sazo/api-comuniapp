@@ -1,6 +1,5 @@
 import { Router, Response, Request } from "express";
 import { FileUpload } from "../interfaces/file-upload";
-import FileSystem from "../classes/file-system";
 import { verificaToken, verificaTokenPermis } from "../middlewares/auth-user";
 import { Post } from "../models/post.model";
 import ImageUpload from "../classes/image-upload";

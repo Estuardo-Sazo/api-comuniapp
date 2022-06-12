@@ -13,11 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const file_system_1 = __importDefault(require("../classes/file-system"));
 const auth_user_1 = require("../middlewares/auth-user");
 const post_model_1 = require("../models/post.model");
 const image_upload_1 = __importDefault(require("../classes/image-upload"));
-const fileSystem = new file_system_1.default();
 const imageUpload = new image_upload_1.default();
 const folderImagesName = 'posts';
 const postRoutes = (0, express_1.Router)();

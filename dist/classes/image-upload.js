@@ -70,9 +70,8 @@ class ImageUpload {
             return 'Not Files';
         }
         const filesTemp = this.getFilesTempFolder(pathTemp);
-        // Move Folder Files
         filesTemp.forEach(img => {
-            //fs.renameSync(`${pathTemp}/${img}`, `${pathOriginal}/${img}`)
+            // Delete files
             fs_1.default.unlink(`${pathTemp}/${img}`, (err => {
                 console.log(err);
             }));
