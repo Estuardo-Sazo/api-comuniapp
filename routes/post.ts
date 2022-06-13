@@ -8,8 +8,6 @@ const folderImagesName='posts';
 const postRoutes = Router();
 
 
-
-
 //? GET POST
 
 postRoutes.get('/', async (req: any, res: Response) => {

@@ -22,8 +22,7 @@ const userSchema = new Schema({
     },
     cui: {
         type: String,
-        unique: true,
-        required: [true, 'El CUI es necesario'],
+        unique: true,        
     },
     phone: {
         type: String,

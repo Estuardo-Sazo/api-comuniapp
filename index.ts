@@ -20,7 +20,7 @@ server.app.use(bodyParser.json());
 server.app.use(fileupload());
 
 // configurar cors
-server.app.use(cors({origin:true, Credential:true}));
+server.app.use(cors({origin:true}));
 
 /// IMPORTAR RUTAS DE APP
 server.app.use('/user', userRoutes);
@@ -34,7 +34,7 @@ server.app.use('/comments', commentRoutes);
 
 
 //CONECTAR DB
-mongoose.connect('mongodb://localhost:27017/comunidb', {
+mongoose.connect(server.dbUrl, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true,

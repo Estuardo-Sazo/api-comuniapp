@@ -24,7 +24,6 @@ const userSchema = new mongoose_1.Schema({
     cui: {
         type: String,
         unique: true,
-        required: [true, 'El CUI es necesario'],
     },
     phone: {
         type: String,
