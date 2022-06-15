@@ -226,7 +226,9 @@ userRoutes.post('/list', [auth_user_1.verificaTokenPermis], (req, res) => __awai
 //? Obtener USers for search
 userRoutes.get('/search/:search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const search = req.params.search;
-    const users = yield user_model_1.User.find({ $or: [{ names: /search/ }, { surnames: /search/ }] })
+    const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
+    const searchRgx = rgx(search);
+    const users = yield user_model_1.User.find({ $or: [{ names: { $regex: searchRgx, $options: "i" } }, { surnames: { $regex: searchRgx, $options: "i" } }] })
         .exec();
     res.json({
         ok: true,
