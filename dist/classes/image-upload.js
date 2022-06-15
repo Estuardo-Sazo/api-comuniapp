@@ -64,8 +64,8 @@ class ImageUpload {
         });
         return filesTemp;
     }
-    deleteFilfeFolderTemp(userId) {
-        const pathTemp = path_1.default.resolve(__dirname, '../uploads/', userId, 'temp');
+    deleteFilfeTemp(userId, folder = 'temp') {
+        const pathTemp = path_1.default.resolve(__dirname, '../uploads/', userId, folder);
         if (!fs_1.default.existsSync(pathTemp)) {
             return 'Not Files';
         }
@@ -73,10 +73,10 @@ class ImageUpload {
         filesTemp.forEach(img => {
             // Delete files
             fs_1.default.unlink(`${pathTemp}/${img}`, (err => {
-                console.log(err);
+                console.log('ERROR DELTE FILE: ' + err);
             }));
         });
-        return 'Delete Files Temp';
+        return 'Delete Files Temp o Profile';
     }
     getUrlFile(userId, img, folder) {
         const urlFile = path_1.default.resolve(__dirname, '../uploads', userId, folder, img);

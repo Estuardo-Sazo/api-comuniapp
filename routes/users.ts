@@ -5,6 +5,9 @@ import FileSystemProfile from "../classes/imag-profile";
 import bcrypt = require("bcrypt");
 import Token from "../classes/token";
 import { verificaToken,verificaTokenPermis } from "../middlewares/auth-user"; 
+import ImageUpload from "../classes/image-upload";
+const imageUpload= new ImageUpload();
+
 
 const userRoutes = Router();
 const fileSystem = new FileSystemProfile();
@@ -107,10 +110,11 @@ userRoutes.post('/create', (req: Request, res: Response) => {
         email: req.body.email,
         image: req.body.image,
         password:  bcrypt.hashSync(req.body.password, 10),
-        type: req.body.type
-       
+        type: req.body.type       
     };
 
+    console.log("CREATED: ", user);
+    
     
     User.create(user).then(userDB => {
         const tokenUsuario = Token.getJwtToken({
@@ -272,12 +276,12 @@ userRoutes.post('/upload', [verificaToken], async (req: any, res: Response) => {
             mensaje: "No subió una imagen"
         });
     }
-
+    const userId = req.user._id;
+    const repose = imageUpload.deleteFilfeTemp(userId,'profile');
     const path =await fileSystem.guardarImageProfile(file, req.user._id);
-    const userId = req.user._id
     
-    console.log(path);
-    console.log('USER ID :', userId);
+    console.log(repose);
+    console.log('PHOTO UPDATE USER ID :'+ userId);
     
     res.status(200).send(
        path
@@ -285,7 +289,7 @@ userRoutes.post('/upload', [verificaToken], async (req: any, res: Response) => {
 
 });
 
-//? GET IMAGE REPORT
+//? GET IMAGE PROFIME
 userRoutes.get('/image/:userId/:img', (req: any, res: Response) => {
     console.log('GET:  IMG PROFILE');
     

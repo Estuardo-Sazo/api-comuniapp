@@ -106,7 +106,7 @@ postRoutes.post('/clearTemp/:userId', (req, res) => {
     console.log('GET:  CLEAR IMG TEMP POST');
     const userId = req.params.userId;
     const img = req.params.img;
-    const repose = imageUpload.deleteFilfeFolderTemp(userId);
+    const repose = imageUpload.deleteFilfeTemp(userId, 'temp');
     res.status(200).json({
         ok: true,
         repose
@@ -115,7 +115,7 @@ postRoutes.post('/clearTemp/:userId', (req, res) => {
 //! POSST LIKE
 postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.postId;
-    console.log('POST ID:', postId);
+    console.log('POST LIKE:', postId);
     const userId = req.user._id;
     const likeIs = yield post_model_1.Post.find({ $and: [{ _id: postId }, { likes: userId }] }).exec();
     if (likeIs.length > 0) {
@@ -124,6 +124,7 @@ postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awa
             erro: 'Is liked',
             postId
         });
+        return;
     }
     else {
         post_model_1.Post.findByIdAndUpdate({ _id: postId }, { $push: { likes: userId } }, { new: true, runValidators: true }, (err, postDB) => {
@@ -132,15 +133,18 @@ postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awa
                     ok: false,
                     Error: err,
                 });
+                return;
             }
-            if (!postDB) {
+            else if (!postDB) {
                 res.json({
                     ok: false,
                     token: 'No existe un post',
                 });
+                return;
             }
             res.json({
                 ok: true,
+                message: 'liked',
                 post: postDB,
             });
         });
@@ -149,12 +153,13 @@ postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awa
 //! POSST DISLIKE
 postRoutes.get('/:postId/dislike', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.postId;
+    console.log('POST DISLIKE:', postId);
     const userId = req.user._id;
     const likeIs = yield post_model_1.Post.find({ likes: userId }).exec();
     if (likeIs.length === 0) {
         res.json({
             ok: false,
-            erro: 'Desliked'
+            erro: 'Ya Desliked'
         });
     }
     else {
@@ -164,16 +169,18 @@ postRoutes.get('/:postId/dislike', [auth_user_1.verificaToken], (req, res) => __
                     ok: false,
                     Error: err,
                 });
+                return;
             }
-            if (!postDB) {
+            else if (!postDB) {
                 res.json({
                     ok: false,
                     token: 'No existe un post',
                 });
+                return;
             }
             res.json({
                 ok: true,
-                message: 'liked',
+                message: 'Desliked',
                 post: postDB,
             });
         });

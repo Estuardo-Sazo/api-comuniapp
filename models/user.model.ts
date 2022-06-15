@@ -43,6 +43,7 @@ const userSchema = new Schema({
 });
 
 userSchema.method('compararPassword', function (password: string = ''): boolean {
+    //@ts-ignore
     if (bcrypt.compareSync(password, this.password )) {
         return true;
     } else {
@@ -53,7 +54,7 @@ userSchema.method('compararPassword', function (password: string = ''): boolean 
 interface IUsuario extends Document {
     names: string;
     surnames: string;
-    cui: number;
+    cui?: string;
     phone?: string;
     location?: string;
     email: string;

@@ -18,6 +18,8 @@ const imag_profile_1 = __importDefault(require("../classes/imag-profile"));
 const bcrypt = require("bcrypt");
 const token_1 = __importDefault(require("../classes/token"));
 const auth_user_1 = require("../middlewares/auth-user");
+const image_upload_1 = __importDefault(require("../classes/image-upload"));
+const imageUpload = new image_upload_1.default();
 const userRoutes = (0, express_1.Router)();
 const fileSystem = new imag_profile_1.default();
 //* LOGIN USUARIO
@@ -114,6 +116,7 @@ userRoutes.post('/create', (req, res) => {
         password: bcrypt.hashSync(req.body.password, 10),
         type: req.body.type
     };
+    console.log("CREATED: ", user);
     user_model_1.User.create(user).then(userDB => {
         const tokenUsuario = token_1.default.getJwtToken({
             _id: userDB._id,
@@ -252,13 +255,14 @@ userRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(
             mensaje: "No subió una imagen"
         });
     }
-    const path = yield fileSystem.guardarImageProfile(file, req.user._id);
     const userId = req.user._id;
-    console.log(path);
-    console.log('USER ID :', userId);
+    const repose = imageUpload.deleteFilfeTemp(userId, 'profile');
+    const path = yield fileSystem.guardarImageProfile(file, req.user._id);
+    console.log(repose);
+    console.log('PHOTO UPDATE USER ID :' + userId);
     res.status(200).send(path);
 }));
-//? GET IMAGE REPORT
+//? GET IMAGE PROFIME
 userRoutes.get('/image/:userId/:img', (req, res) => {
     console.log('GET:  IMG PROFILE');
     const userId = req.params.userId;

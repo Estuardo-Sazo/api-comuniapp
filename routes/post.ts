@@ -120,7 +120,7 @@ postRoutes.post('/clearTemp/:userId', (req: any, res: Response) => {
 
     const userId = req.params.userId;
     const img = req.params.img;
-    const repose = imageUpload.deleteFilfeFolderTemp(userId);
+    const repose = imageUpload.deleteFilfeTemp(userId,'temp');
 
     res.status(200).json({
         ok: true,
@@ -131,18 +131,19 @@ postRoutes.post('/clearTemp/:userId', (req: any, res: Response) => {
 //! POSST LIKE
 postRoutes.get('/:postId/like', [verificaToken], async (req: any, res: Response) => {
     const postId = req.params.postId;
-    console.log('POST ID:',postId);
+    console.log('POST LIKE:',postId);    
 
     const userId= req.user._id;
+    
     const likeIs = await Post.find({$and:[{_id:postId},{likes:userId}]}).exec();
     
     if(likeIs.length>0){
         res.json({
             ok: false,
             erro:'Is liked',
-            postId
-            
+            postId            
         });
+        return;
     }else{
         Post.findByIdAndUpdate({_id: postId}, {$push: {likes: userId}}, { new: true, runValidators: true}, (err: any, postDB: any) => {
             if (err) {
@@ -150,18 +151,21 @@ postRoutes.get('/:postId/like', [verificaToken], async (req: any, res: Response)
                     ok: false,
                     Error: err,
                 });
-            }
-            if (!postDB) {
+                return;
+            }else if (!postDB) {
                 res.json({
                     ok: false,
                     token: 'No existe un post',
                 });
+                return;
             }
             
             res.json({
                 ok: true,
+                message:'liked',
                 post: postDB,
             });
+
     
         });
     }
@@ -171,32 +175,37 @@ postRoutes.get('/:postId/like', [verificaToken], async (req: any, res: Response)
 //! POSST DISLIKE
 postRoutes.get('/:postId/dislike', [verificaToken], async (req: any, res: Response) => {
     const postId = req.params.postId;
+    console.log('POST DISLIKE:',postId);
+
+
     const userId= req.user._id;
     const likeIs = await Post.find({likes:userId}).exec();
     if(likeIs.length===0){
         res.json({
             ok: false,
-            erro:'Desliked'
-            
+            erro:'Ya Desliked'            
         });
     }else{
+        
         Post.findByIdAndUpdate({_id: postId}, {$pull: {likes: userId}}, { new: true, runValidators: true}, (err: any, postDB: any) => {
             if (err) {
                 res.json({                    
                     ok: false,
                     Error: err,
                 });
-            }
-            if (!postDB) {
+                return;
+            } else if (!postDB) {
                 res.json({
                     ok: false,
                     token: 'No existe un post',
                 });
+                return;
+
             }
             
             res.json({
                 ok: true,
-                message:'liked',
+                message:'Desliked',
                 post: postDB,
             });
     

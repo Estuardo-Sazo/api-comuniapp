@@ -13,7 +13,6 @@ class FileSystemProfile {
         return new Promise((resolve, reject) => {
             //CREAR CARPETA
             const path = this.crearCarpetaUser(userId);
-            console.log('PATH:', path);
             //Nombre de archivo
             const nombreArchivo = this.generarNombreUnico(file.name);
             //Mover archivo del Temp a la CARPETA

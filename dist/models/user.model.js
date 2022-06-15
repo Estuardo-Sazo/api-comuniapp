@@ -43,6 +43,7 @@ const userSchema = new mongoose_1.Schema({
     }
 });
 userSchema.method('compararPassword', function (password = '') {
+    //@ts-ignore
     if (bcrypt.compareSync(password, this.password)) {
         return true;
     }
