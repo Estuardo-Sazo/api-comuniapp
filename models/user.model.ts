@@ -21,8 +21,7 @@ const userSchema = new Schema({
         required: [true, 'El correo es necesario'],
     },
     cui: {
-        type: String,
-        unique: true,        
+        type: String,       
     },
     phone: {
         type: String,
@@ -33,13 +32,17 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es necesaria']
     },
     type:{
         type: String,
         enum: ['ADMIN','EDITOR','USER'],
         default: 'USER'
+    },
+    google:{
+        type: Boolean,
+        default: false
     }
+        
 });
 
 userSchema.method('compararPassword', function (password: string = ''): boolean {

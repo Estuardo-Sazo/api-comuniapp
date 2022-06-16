@@ -103,6 +103,47 @@ userRoutes.post('/login-ad', (req, res) => {
         }
     });
 });
+userRoutes.post('/login-google', (req, res) => {
+    const body = req.body;
+    user_model_1.User.findOne({ $or: [{ email: body.email }, { cui: body.email }] }, (err, userDB) => {
+        if (err)
+            throw err;
+        if (!userDB) {
+            return res.json({
+                ok: false,
+                isregister: false,
+                mensaje: "Usuario Google no existe"
+            });
+        }
+        console.log('USER LOGIN GOOGLE: ', userDB);
+        if (userDB.google === true) {
+            const tokenUsuario = token_1.default.getJwtToken({
+                _id: userDB._id,
+                names: userDB.names,
+                surnames: userDB.surnames,
+                email: userDB.email,
+                image: userDB.image,
+                type: userDB.type,
+                location: userDB.location,
+                phone: userDB.phone,
+                cui: userDB.cui,
+                google: userDB.google
+            });
+            console.log('--- Login Google');
+            res.json({
+                ok: true,
+                token: tokenUsuario,
+            });
+        }
+        else {
+            return res.json({
+                ok: false,
+                isregister: true,
+                mensaje: "Correo de Google ya se encuentra registrado, ingresa con tu contraseña"
+            });
+        }
+    });
+});
 //TODO: Create User
 userRoutes.post('/create', (req, res) => {
     const user = {
@@ -113,8 +154,9 @@ userRoutes.post('/create', (req, res) => {
         location: req.body.location,
         email: req.body.email,
         image: req.body.image,
-        password: bcrypt.hashSync(req.body.password, 10),
-        type: req.body.type
+        password: req.body.password == '' ? '' : bcrypt.hashSync(req.body.password, 10),
+        type: req.body.type,
+        google: req.body.google
     };
     console.log("CREATED: ", user);
     user_model_1.User.create(user).then(userDB => {

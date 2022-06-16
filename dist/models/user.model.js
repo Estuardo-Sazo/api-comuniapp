@@ -23,7 +23,6 @@ const userSchema = new mongoose_1.Schema({
     },
     cui: {
         type: String,
-        unique: true,
     },
     phone: {
         type: String,
@@ -34,12 +33,15 @@ const userSchema = new mongoose_1.Schema({
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es necesaria']
     },
     type: {
         type: String,
         enum: ['ADMIN', 'EDITOR', 'USER'],
         default: 'USER'
+    },
+    google: {
+        type: Boolean,
+        default: false
     }
 });
 userSchema.method('compararPassword', function (password = '') {
