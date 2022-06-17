@@ -181,11 +181,12 @@ userRoutes.post('/create', (req, res) => {
 });
 //UPDATE
 userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
+    console.log('UPDATE USER: ');
     const userUp = {
         names: req.body.names || req.user.names,
         surnames: req.body.surnames || req.user.surnames,
-        phone: req.body.phone || req.user.phone,
-        cui: req.body.cui || req.user.cui,
+        phone: req.body.phone || '',
+        cui: req.body.cui || '',
         location: req.body.location || req.user.location,
         email: req.body.email || req.user.email,
         image: req.body.image || req.user.image,
