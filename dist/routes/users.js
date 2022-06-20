@@ -299,6 +299,7 @@ userRoutes.post("/list", [auth_user_1.verificaTokenPermis], (req, res) => __awai
     }
 }));
 //? Obtener USers for search
+
 userRoutes.post("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const search = req.body.search;
     const tipo = req.body.type;
@@ -314,6 +315,7 @@ userRoutes.post("/search", (req, res) => __awaiter(void 0, void 0, void 0, funct
         $and: [{ type: { $ne: tipo } }]
     }).exec();
     console.log("users: ", users);
+
     res.json({
         ok: true,
         users,

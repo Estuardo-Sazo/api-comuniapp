@@ -356,6 +356,7 @@ userRoutes.post("/search", async (req: any, res: Response) => {
     ok: true,
     users,
   });
+
 });
 
 //? UPDATE IMAGE PROFILE
