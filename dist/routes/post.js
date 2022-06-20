@@ -36,6 +36,29 @@ postRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         posts
     });
 }));
+//? UPDATE POST DATE
+postRoutes.post('/update-date', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPermis], (req, res) => {
+    if (req.typeUser == 'USER') {
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }
+    else {
+        const body = req.body;
+        post_model_1.Post.findByIdAndUpdate(body._id, body, { new: true, runValidators: true }, (err, dataDB) => {
+            res.json({
+                ok: true,
+                data: dataDB
+            });
+        }).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
+});
 //? CREAR POST
 postRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPermis], (req, res) => {
     if (req.typeUser == 'USER') {

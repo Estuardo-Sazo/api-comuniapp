@@ -86,4 +86,27 @@ commentRoutes.post('/update/:id', [auth_user_1.verificaToken], (req, res) => {
         });
     });
 });
+//? UPDATE POST DATE
+commentRoutes.post('/update-date', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPermis], (req, res) => {
+    if (req.typeUser == 'USER') {
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }
+    else {
+        const body = req.body;
+        comments_model_1.Comment.findByIdAndUpdate(body._id, body, { new: true, runValidators: true }, (err, dataDB) => {
+            res.json({
+                ok: true,
+                data: dataDB
+            });
+        }).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
+});
 exports.default = commentRoutes;

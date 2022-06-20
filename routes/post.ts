@@ -30,6 +30,33 @@ postRoutes.get('/', async (req: any, res: Response) => {
     });
 });
 
+//? UPDATE POST DATE
+postRoutes.post('/update-date', [verificaToken],[verificaTokenPermis], (req: any, res: Response) => {
+
+    if(req.typeUser=='USER'){
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }else{
+        const body = req.body;      
+    
+        Post.findByIdAndUpdate(body._id, body, { new: true, runValidators: true}, (err: any, dataDB: any) => {   
+    
+            res.json({
+                ok: true,
+                data: dataDB
+            });
+        }).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
+    
+});
+
 //? CREAR POST
 postRoutes.post('/', [verificaToken],[verificaTokenPermis], (req: any, res: Response) => {
 

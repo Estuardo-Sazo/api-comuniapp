@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
 import { FileUpload } from "../interfaces/file-upload";
-import { verificaToken } from "../middlewares/auth-user";
+import { verificaToken, verificaTokenPermis } from "../middlewares/auth-user";
 import { Report } from "../models/report.model";
 import ImageUpload from "../classes/image-upload";
 const imageUpload= new ImageUpload();
@@ -114,6 +114,33 @@ reportRoutes.post('/upload', [verificaToken], async (req: any, res: Response) =>
 
 });
 
+
+//? UPDATE POST DATE
+reportRoutes.post('/update-date', [verificaToken],[verificaTokenPermis], (req: any, res: Response) => {
+
+    if(req.typeUser=='USER'){
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }else{
+        const body = req.body;      
+    
+        Report.findByIdAndUpdate(body._id, body, { new: true, runValidators: true}, (err: any, dataDB: any) => {   
+    
+            res.json({
+                ok: true,
+                data: dataDB
+            });
+        }).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
+    
+});
 
 //? GET IMAGE REPORT
 reportRoutes.get('/image/:userId/:img', (req: any, res: Response) => {

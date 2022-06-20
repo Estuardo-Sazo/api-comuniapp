@@ -105,6 +105,29 @@ reportRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaite
         file: file.mimetype
     });
 }));
+//? UPDATE POST DATE
+reportRoutes.post('/update-date', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPermis], (req, res) => {
+    if (req.typeUser == 'USER') {
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }
+    else {
+        const body = req.body;
+        report_model_1.Report.findByIdAndUpdate(body._id, body, { new: true, runValidators: true }, (err, dataDB) => {
+            res.json({
+                ok: true,
+                data: dataDB
+            });
+        }).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
+});
 //? GET IMAGE REPORT
 reportRoutes.get('/image/:userId/:img', (req, res) => {
     console.log('GET:  IMG REPORT');
