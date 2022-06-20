@@ -21,9 +21,7 @@ const userSchema = new Schema({
         required: [true, 'El correo es necesario'],
     },
     cui: {
-        type: String,
-        unique: true,
-        required: [true, 'El CUI es necesario'],
+        type: String,       
     },
     phone: {
         type: String,
@@ -34,16 +32,21 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es necesaria']
     },
     type:{
         type: String,
-        enum: ['ADMIN','CHARGED','USER'],
+        enum: ['ADMIN','EDITOR','USER'],
         default: 'USER'
+    },
+    google:{
+        type: Boolean,
+        default: false
     }
+        
 });
 
 userSchema.method('compararPassword', function (password: string = ''): boolean {
+    //@ts-ignore
     if (bcrypt.compareSync(password, this.password )) {
         return true;
     } else {
@@ -54,7 +57,7 @@ userSchema.method('compararPassword', function (password: string = ''): boolean 
 interface IUsuario extends Document {
     names: string;
     surnames: string;
-    cui: number;
+    cui?: string;
     phone?: string;
     location?: string;
     email: string;

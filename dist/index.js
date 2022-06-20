@@ -20,7 +20,7 @@ server.app.use(body_parser_1.default.json());
 //FILEUPLOAD FR
 server.app.use((0, express_fileupload_1.default)());
 // configurar cors
-server.app.use((0, cors_1.default)({ origin: true, Credential: true }));
+server.app.use((0, cors_1.default)({ origin: true }));
 /// IMPORTAR RUTAS DE APP
 server.app.use('/user', users_1.default);
 server.app.use('/posts', post_1.default);
@@ -28,7 +28,7 @@ server.app.use('/type-report', type_report_1.default);
 server.app.use('/reports', report_1.default);
 server.app.use('/comments', comment_1.default);
 //CONECTAR DB
-mongoose_1.default.connect('mongodb://localhost:27017/comunidb', {
+mongoose_1.default.connect(server.dbUrl, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true,

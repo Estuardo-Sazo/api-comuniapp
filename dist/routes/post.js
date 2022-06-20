@@ -13,11 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const file_system_1 = __importDefault(require("../classes/file-system"));
 const auth_user_1 = require("../middlewares/auth-user");
 const post_model_1 = require("../models/post.model");
+const image_upload_1 = __importDefault(require("../classes/image-upload"));
+const imageUpload = new image_upload_1.default();
+const folderImagesName = 'posts';
 const postRoutes = (0, express_1.Router)();
-const fileSystem = new file_system_1.default();
 //? GET POST
 postRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let pagina = Number(req.query.pagina) || 1;
@@ -46,7 +47,8 @@ postRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPerm
     else {
         const body = req.body;
         body.user = req.user._id;
-        const imagenes = fileSystem.imagenesTempPosts(req.user._id);
+        //const imagenes = fileSystem.imagenesTempPosts(req.user._id);
+        const imagenes = imageUpload.moveFileFolderTempToOrginial(req.user._id, folderImagesName);
         body.imgs = imagenes;
         post_model_1.Post.create(body).then((postDB) => __awaiter(void 0, void 0, void 0, function* () {
             yield postDB.populate('user', '-password').execPopulate();
@@ -62,8 +64,9 @@ postRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPerm
         });
     }
 });
-//? Servicio de subida de archivos
+//? UPLOAD  IMAGE POST
 postRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('POST: UPLOAD IMG POST');
     if (!req.files) {
         return res.status(400).json({
             ok: false,
@@ -83,23 +86,36 @@ postRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(
             mensaje: "No subió una imagen"
         });
     }
-    yield fileSystem.guardarImageTemp(file, req.user._id);
+    //await fileSystem.guardarImageTemp(file, req.user._id);
+    yield imageUpload.saveImageTemp(file, req.user._id);
     res.status(200).json({
         ok: true,
         file: file.mimetype
     });
 }));
-//? mostrarimages
+//? mGET IMAGE POST
 postRoutes.get('/imagen/:userId/:img', (req, res) => {
+    console.log('GET:  IMG POST');
     const userId = req.params.userId;
     const img = req.params.img;
-    const pathImg = fileSystem.getFotoUrl(userId, img);
+    const pathImg = imageUpload.getUrlFile(userId, img, folderImagesName);
     res.sendFile(pathImg);
+});
+//! DELETE FILES TEMP
+postRoutes.post('/clearTemp/:userId', (req, res) => {
+    console.log('GET:  CLEAR IMG TEMP POST');
+    const userId = req.params.userId;
+    const img = req.params.img;
+    const repose = imageUpload.deleteFilfeTemp(userId, 'temp');
+    res.status(200).json({
+        ok: true,
+        repose
+    });
 });
 //! POSST LIKE
 postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.postId;
-    console.log('POST ID:', postId);
+    console.log('POST LIKE:', postId);
     const userId = req.user._id;
     const likeIs = yield post_model_1.Post.find({ $and: [{ _id: postId }, { likes: userId }] }).exec();
     if (likeIs.length > 0) {
@@ -108,6 +124,7 @@ postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awa
             erro: 'Is liked',
             postId
         });
+        return;
     }
     else {
         post_model_1.Post.findByIdAndUpdate({ _id: postId }, { $push: { likes: userId } }, { new: true, runValidators: true }, (err, postDB) => {
@@ -116,15 +133,18 @@ postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awa
                     ok: false,
                     Error: err,
                 });
+                return;
             }
-            if (!postDB) {
+            else if (!postDB) {
                 res.json({
                     ok: false,
                     token: 'No existe un post',
                 });
+                return;
             }
             res.json({
                 ok: true,
+                message: 'liked',
                 post: postDB,
             });
         });
@@ -133,12 +153,13 @@ postRoutes.get('/:postId/like', [auth_user_1.verificaToken], (req, res) => __awa
 //! POSST DISLIKE
 postRoutes.get('/:postId/dislike', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.postId;
+    console.log('POST DISLIKE:', postId);
     const userId = req.user._id;
     const likeIs = yield post_model_1.Post.find({ likes: userId }).exec();
     if (likeIs.length === 0) {
         res.json({
             ok: false,
-            erro: 'Desliked'
+            erro: 'Ya Desliked'
         });
     }
     else {
@@ -148,16 +169,18 @@ postRoutes.get('/:postId/dislike', [auth_user_1.verificaToken], (req, res) => __
                     ok: false,
                     Error: err,
                 });
+                return;
             }
-            if (!postDB) {
+            else if (!postDB) {
                 res.json({
                     ok: false,
                     token: 'No existe un post',
                 });
+                return;
             }
             res.json({
                 ok: true,
-                message: 'liked',
+                message: 'Desliked',
                 post: postDB,
             });
         });

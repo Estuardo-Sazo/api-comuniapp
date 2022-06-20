@@ -1,10 +1,11 @@
-import { Router, Response, Request } from "express";
+import { Router, Response } from "express";
 import { FileUpload } from "../interfaces/file-upload";
-import FileSystemReport from "../classes/file-system-report";
-import { verificaToken, verificaTokenPermis } from "../middlewares/auth-user";
+import { verificaToken } from "../middlewares/auth-user";
 import { Report } from "../models/report.model";
+import ImageUpload from "../classes/image-upload";
+const imageUpload= new ImageUpload();
+const folderImagesName='report';
 const reportRoutes = Router();
-const fileSystem = new FileSystemReport();
 
 
 //? GET Reports
@@ -59,7 +60,7 @@ reportRoutes.post('/', [verificaToken], (req: any, res: Response) => {
         const body = req.body;
         body.user= req.user._id;
 
-        const imagenes = fileSystem.imagenesTempReport(req.user._id);
+        const imagenes = imageUpload.moveFileFolderTempToOrginial(req.user._id,folderImagesName);
         body.imgs = imagenes;
     
         Report.create(body).then(async dataDB => {    
@@ -104,7 +105,8 @@ reportRoutes.post('/upload', [verificaToken], async (req: any, res: Response) =>
         });
     }
 
-    await fileSystem.guardarImageTemp(file, req.user._id);
+    await imageUpload.saveImageTemp(file, req.user._id);
+
     res.status(200).json({
         ok: true,
         file: file.mimetype
@@ -119,7 +121,8 @@ reportRoutes.get('/image/:userId/:img', (req: any, res: Response) => {
 
     const userId = req.params.userId;
     const img = req.params.img;
-    const pathImg = fileSystem.getFotoUrl(userId, img);
+    const pathImg = imageUpload.getUrlFile(userId, img, folderImagesName);
+
 
     res.sendFile(pathImg);
 });

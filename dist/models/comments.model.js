@@ -23,6 +23,10 @@ const commentSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
         required: [true, 'Debe existir una referecnia a un usuario']
+    },
+    new: {
+        type: Boolean,
+        default: true
     }
 });
 commentSchema.pre('save', function (next) {

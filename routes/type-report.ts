@@ -10,7 +10,7 @@ const typeReportRoutes = Router();
 typeReportRoutes.get('/',[verificaToken], async (req: any, res: Response) => {
     console.log('GET: TYPE REPORT');
     
-    const typeReports = await TypeReport.find().exec();
+    const typeReports = await TypeReport.find({status:{$ne:'INACTIVE'}}).exec();
     res.json({
         ok: true,
         typeReports
@@ -20,8 +20,7 @@ typeReportRoutes.get('/',[verificaToken], async (req: any, res: Response) => {
 //? GET REPORTS ID
 
 typeReportRoutes.get('/:id', async (req: any, res: Response) => {
-    const id= req.params.id;
-    
+    const id= req.params.id;    
      const typeReport = await TypeReport.find({_id:id}).exec();
     res.json({
         ok: true,
@@ -32,7 +31,6 @@ typeReportRoutes.get('/:id', async (req: any, res: Response) => {
 //? CREAR Type Report
 typeReportRoutes.post('/', [verificaToken],[verificaTokenPermis], (req: any, res: Response) => {
     console.log('POST: TYPE REPORT');
-
     if(req.typeUser=='USER'){
         res.json({
             ok: false,
@@ -40,8 +38,7 @@ typeReportRoutes.post('/', [verificaToken],[verificaTokenPermis], (req: any, res
         });
     }else{
         const body = req.body;
-        TypeReport.create(body).then(async dataDB => {
-    
+        TypeReport.create(body).then(async dataDB => {    
     
             res.json({
                 ok: true,
@@ -60,7 +57,35 @@ typeReportRoutes.post('/', [verificaToken],[verificaTokenPermis], (req: any, res
 typeReportRoutes.post('/update',[verificaToken],[verificaTokenPermis], (req: any, res: Response) => {
     console.log('UPDATE: TYPE REPORT');
     const body = req.body;
+    if(req.typeUser=='USER'){
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }else{
+        const body = req.body;
+        TypeReport.findByIdAndUpdate(body._id, body, { new: true, runValidators: true}, (err: any, dataDB: any) => {   
+    
+            res.json({
+                ok: true,
+                typeReport: dataDB
+            });
+        }).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
 
+});
+
+//! DELETE TYPE REPORT
+typeReportRoutes.post('/update/delete',[verificaToken],[verificaTokenPermis], (req: any, res: Response) => {
+    console.log('DELETE: TYPE REPORT');
+    const body = req.body;
+    body.status = 'INACTIVE';
+    
     if(req.typeUser=='USER'){
         res.json({
             ok: false,

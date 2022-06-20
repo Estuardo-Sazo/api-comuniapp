@@ -23,8 +23,6 @@ const userSchema = new mongoose_1.Schema({
     },
     cui: {
         type: String,
-        unique: true,
-        required: [true, 'El CUI es necesario'],
     },
     phone: {
         type: String,
@@ -35,15 +33,19 @@ const userSchema = new mongoose_1.Schema({
     },
     password: {
         type: String,
-        required: [true, 'La contraseña es necesaria']
     },
     type: {
         type: String,
-        enum: ['ADMIN', 'CHARGED', 'USER'],
+        enum: ['ADMIN', 'EDITOR', 'USER'],
         default: 'USER'
+    },
+    google: {
+        type: Boolean,
+        default: false
     }
 });
 userSchema.method('compararPassword', function (password = '') {
+    //@ts-ignore
     if (bcrypt.compareSync(password, this.password)) {
         return true;
     }

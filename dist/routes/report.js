@@ -13,11 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const file_system_report_1 = __importDefault(require("../classes/file-system-report"));
 const auth_user_1 = require("../middlewares/auth-user");
 const report_model_1 = require("../models/report.model");
+const image_upload_1 = __importDefault(require("../classes/image-upload"));
+const imageUpload = new image_upload_1.default();
+const folderImagesName = 'report';
 const reportRoutes = (0, express_1.Router)();
-const fileSystem = new file_system_report_1.default();
 //? GET Reports
 reportRoutes.get('/:id', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
@@ -60,7 +61,7 @@ reportRoutes.post('/', [auth_user_1.verificaToken], (req, res) => {
     else {
         const body = req.body;
         body.user = req.user._id;
-        const imagenes = fileSystem.imagenesTempReport(req.user._id);
+        const imagenes = imageUpload.moveFileFolderTempToOrginial(req.user._id, folderImagesName);
         body.imgs = imagenes;
         report_model_1.Report.create(body).then((dataDB) => __awaiter(void 0, void 0, void 0, function* () {
             yield dataDB.populate('user', '-password').populate('type').execPopulate();
@@ -98,7 +99,7 @@ reportRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaite
             mensaje: "No subió una imagen"
         });
     }
-    yield fileSystem.guardarImageTemp(file, req.user._id);
+    yield imageUpload.saveImageTemp(file, req.user._id);
     res.status(200).json({
         ok: true,
         file: file.mimetype
@@ -109,7 +110,7 @@ reportRoutes.get('/image/:userId/:img', (req, res) => {
     console.log('GET:  IMG REPORT');
     const userId = req.params.userId;
     const img = req.params.img;
-    const pathImg = fileSystem.getFotoUrl(userId, img);
+    const pathImg = imageUpload.getUrlFile(userId, img, folderImagesName);
     res.sendFile(pathImg);
 });
 //? INANCTIVE COMENT

@@ -22,6 +22,10 @@ const commentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: [true, 'Debe existir una referecnia a un usuario']
+    },
+    new:{
+        type: Boolean,
+        default: true
     }
 });
 
@@ -37,6 +41,8 @@ interface IComment extends Document {
     user: string;
     status?: string;
     reference: string;
+    new: boolean;
+
 }
 
 export const Comment = model<IComment>('Comment', commentSchema);
