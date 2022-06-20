@@ -23,7 +23,7 @@ const imageUpload = new image_upload_1.default();
 const userRoutes = (0, express_1.Router)();
 const fileSystem = new imag_profile_1.default();
 //* LOGIN USUARIO
-userRoutes.post('/login', (req, res) => {
+userRoutes.post("/login", (req, res) => {
     const body = req.body;
     user_model_1.User.findOne({ $or: [{ email: body.email }, { cui: body.email }] }, (err, userDB) => {
         if (err)
@@ -31,7 +31,7 @@ userRoutes.post('/login', (req, res) => {
         if (!userDB) {
             return res.json({
                 ok: false,
-                mensaje: "Usuario/Contraseña son incorrectos"
+                mensaje: "Usuario/Contraseña son incorrectos",
             });
         }
         if (userDB.compararPassword(body.password)) {
@@ -44,9 +44,9 @@ userRoutes.post('/login', (req, res) => {
                 type: userDB.type,
                 location: userDB.location,
                 phone: userDB.phone,
-                cui: userDB.cui
+                cui: userDB.cui,
             });
-            console.log('--- Login');
+            console.log("--- Login");
             res.json({
                 ok: true,
                 token: tokenUsuario,
@@ -55,12 +55,12 @@ userRoutes.post('/login', (req, res) => {
         else {
             return res.json({
                 ok: false,
-                mensaje: "Usuario/Contraseña son incorrectos "
+                mensaje: "Usuario/Contraseña son incorrectos ",
             });
         }
     });
 });
-userRoutes.post('/login-ad', (req, res) => {
+userRoutes.post("/login-ad", (req, res) => {
     const body = req.body;
     user_model_1.User.findOne({ email: body.email }, (err, userDB) => {
         if (err)
@@ -68,13 +68,13 @@ userRoutes.post('/login-ad', (req, res) => {
         if (!userDB) {
             return res.json({
                 ok: false,
-                mensaje: "Usuario/Contraseña son incorrectos"
+                mensaje: "Usuario/Contraseña son incorrectos",
             });
         }
-        if (userDB.type != 'ADMIN') {
+        if (userDB.type != "ADMIN") {
             return res.json({
                 ok: false,
-                mensaje: "Usuario Incorrecto"
+                mensaje: "Usuario Incorrecto",
             });
         }
         if (userDB.compararPassword(body.password)) {
@@ -87,9 +87,9 @@ userRoutes.post('/login-ad', (req, res) => {
                 type: userDB.type,
                 location: userDB.location,
                 phone: userDB.phone,
-                cui: userDB.cui
+                cui: userDB.cui,
             });
-            console.log('--- Login');
+            console.log("--- Login");
             res.json({
                 ok: true,
                 token: tokenUsuario,
@@ -98,12 +98,12 @@ userRoutes.post('/login-ad', (req, res) => {
         else {
             return res.json({
                 ok: false,
-                mensaje: "Usuario/Contraseña son incorrectos "
+                mensaje: "Usuario/Contraseña son incorrectos ",
             });
         }
     });
 });
-userRoutes.post('/login-google', (req, res) => {
+userRoutes.post("/login-google", (req, res) => {
     const body = req.body;
     user_model_1.User.findOne({ $or: [{ email: body.email }, { cui: body.email }] }, (err, userDB) => {
         if (err)
@@ -112,10 +112,10 @@ userRoutes.post('/login-google', (req, res) => {
             return res.json({
                 ok: false,
                 isregister: false,
-                mensaje: "Usuario Google no existe"
+                mensaje: "Usuario Google no existe",
             });
         }
-        console.log('USER LOGIN GOOGLE: ', userDB);
+        console.log("USER LOGIN GOOGLE: ", userDB);
         if (userDB.google === true) {
             const tokenUsuario = token_1.default.getJwtToken({
                 _id: userDB._id,
@@ -127,9 +127,9 @@ userRoutes.post('/login-google', (req, res) => {
                 location: userDB.location,
                 phone: userDB.phone,
                 cui: userDB.cui,
-                google: userDB.google
+                google: userDB.google,
             });
-            console.log('--- Login Google');
+            console.log("--- Login Google");
             res.json({
                 ok: true,
                 token: tokenUsuario,
@@ -139,13 +139,13 @@ userRoutes.post('/login-google', (req, res) => {
             return res.json({
                 ok: false,
                 isregister: true,
-                mensaje: "Correo de Google ya se encuentra registrado, ingresa con tu contraseña"
+                mensaje: "Correo de Google ya se encuentra registrado, ingresa con tu contraseña",
             });
         }
     });
 });
 //TODO: Create User
-userRoutes.post('/create', (req, res) => {
+userRoutes.post("/create", (req, res) => {
     const user = {
         names: req.body.names,
         surnames: req.body.surnames,
@@ -154,12 +154,13 @@ userRoutes.post('/create', (req, res) => {
         location: req.body.location,
         email: req.body.email,
         image: req.body.image,
-        password: req.body.password == '' ? '' : bcrypt.hashSync(req.body.password, 10),
+        password: req.body.password == "" ? "" : bcrypt.hashSync(req.body.password, 10),
         type: req.body.type,
-        google: req.body.google
+        google: req.body.google,
     };
     console.log("CREATED: ", user);
-    user_model_1.User.create(user).then(userDB => {
+    user_model_1.User.create(user)
+        .then((userDB) => {
         const tokenUsuario = token_1.default.getJwtToken({
             _id: userDB._id,
             names: userDB.names,
@@ -169,28 +170,29 @@ userRoutes.post('/create', (req, res) => {
             type: userDB.type,
             location: userDB.location,
             phone: userDB.phone,
-            cui: userDB.cui
+            cui: userDB.cui,
         });
         res.json({
             ok: true,
             token: tokenUsuario,
         });
-    }).catch(err => {
+    })
+        .catch((err) => {
         res.json({ ok: false, err });
     });
 });
 //UPDATE
-userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
-    console.log('UPDATE USER: ');
+userRoutes.post("/update", auth_user_1.verificaToken, (req, res) => {
+    console.log("UPDATE USER: ");
     const userUp = {
         names: req.body.names || req.user.names,
         surnames: req.body.surnames || req.user.surnames,
-        phone: req.body.phone || '',
-        cui: req.body.cui || '',
+        phone: req.body.phone || "",
+        cui: req.body.cui || "",
         location: req.body.location || req.user.location,
         email: req.body.email || req.user.email,
         image: req.body.image || req.user.image,
-        type: req.body.type || req.user.type
+        type: req.body.type || req.user.type,
     };
     user_model_1.User.findByIdAndUpdate(req.user._id, userUp, { new: true, runValidators: true }, (err, userDB) => {
         if (err) {
@@ -202,7 +204,7 @@ userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
         if (!userDB) {
             res.json({
                 ok: false,
-                token: 'No existe un usuario',
+                token: "No existe un usuario",
             });
         }
         const tokenUsuario = token_1.default.getJwtToken({
@@ -214,7 +216,7 @@ userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
             type: userDB.type,
             location: userDB.location,
             phone: userDB.phone,
-            cui: userDB.cui
+            cui: userDB.cui,
         });
         res.json({
             ok: true,
@@ -222,96 +224,135 @@ userRoutes.post('/update', auth_user_1.verificaToken, (req, res) => {
         });
     });
 });
-//Obtener USer
-userRoutes.get('/', auth_user_1.verificaToken, (req, res) => {
-    const usuario = req.user;
-    res.json({
-        ok: true,
-        usuario
-    });
-});
-//Obtener USers
-userRoutes.get('/get', [auth_user_1.verificaTokenPermis], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.typeUser == 'USER') {
+//? TODO: Update Role User
+userRoutes.post("/update-role", auth_user_1.verificaTokenPermis, (req, res) => {
+    const userId = req.body.userId;
+    const role = req.body.role;
+    console.log("UPDATE ROLE USER: ", userId, role);
+    console.log(req.typeUser);
+    if (req.typeUser != "ADMIN") {
         res.json({
             ok: false,
-            message: 'Permisos denegados'
+            message: "Permisos denegados",
         });
     }
     else {
-        const users = yield user_model_1.User.find()
-            .sort({ _id: -1 })
-            .exec();
+        user_model_1.User.findByIdAndUpdate(userId, { type: role }, { new: true, runValidators: true }, (err, userDB) => {
+            if (err) {
+                res.json({
+                    ok: false,
+                    Error: err,
+                });
+            }
+            if (!userDB) {
+                res.json({
+                    ok: false,
+                    token: "No existe un usuario",
+                });
+            }
+            res.json({
+                ok: true,
+                updateRole: true,
+            });
+        });
+    }
+});
+//Obtener USer
+userRoutes.get("/", auth_user_1.verificaToken, (req, res) => {
+    const usuario = req.user;
+    res.json({
+        ok: true,
+        usuario,
+    });
+});
+//Obtener USers
+userRoutes.get("/get", [auth_user_1.verificaTokenPermis], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.typeUser == "USER") {
+        res.json({
+            ok: false,
+            message: "Permisos denegados",
+        });
+    }
+    else {
+        const users = yield user_model_1.User.find().sort({ _id: -1 }).exec();
         res.json({
             ok: true,
-            users
+            users,
         });
     }
 }));
 //Obtener USers for type
-userRoutes.post('/list', [auth_user_1.verificaTokenPermis], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.typeUser != 'ADMIN') {
+userRoutes.post("/list", [auth_user_1.verificaTokenPermis], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.typeUser != "ADMIN") {
         res.json({
             ok: false,
-            message: 'Permisos denegados'
+            message: "Permisos denegados",
         });
     }
     else {
         const type = req.body.type;
-        const users = yield user_model_1.User.find({ type })
-            .exec();
+        const users = yield user_model_1.User.find({ type }).exec();
         res.json({
             ok: true,
-            users
+            users,
         });
     }
 }));
 //? Obtener USers for search
-userRoutes.get('/search/:search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const search = req.params.search;
+userRoutes.post("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const search = req.body.search;
+    const tipo = req.body.type;
+    console.log("search: ", search);
     const rgx = (pattern) => new RegExp(`.*${pattern}.*`);
     const searchRgx = rgx(search);
-    const users = yield user_model_1.User.find({ $or: [{ names: { $regex: searchRgx, $options: "i" } }, { surnames: { $regex: searchRgx, $options: "i" } }] })
-        .exec();
+    const users = yield user_model_1.User.find({
+        $or: [
+            { names: { $regex: '.*' + search, $options: 'i' } },
+            { surnames: { $regex: '.*' + search + '.*', $options: 'i' } },
+            { cui: { $regex: '.*' + search + '.*', $options: 'i' } },
+        ],
+        $and: [{ type: { $ne: tipo } }]
+    }).exec();
+    console.log("users: ", users);
     res.json({
         ok: true,
-        users
+        users,
     });
 }));
 //? UPDATE IMAGE PROFILE
-userRoutes.post('/upload', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('POST: UPLOAD IMG PROFILE');
+userRoutes.post("/upload", [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("POST: UPLOAD IMG PROFILE");
     if (!req.files) {
         return res.status(400).json({
             ok: false,
-            mensaje: "No subió ningun archivo"
+            mensaje: "No subió ningun archivo",
         });
     }
     const file = req.files.image;
     if (!file) {
         return res.status(400).json({
             ok: false,
-            mensaje: "No subió ningun archivo- imagen"
+            mensaje: "No subió ningun archivo- imagen",
         });
     }
-    if (!file.mimetype.includes('image')) {
+    if (!file.mimetype.includes("image")) {
         return res.status(400).json({
             ok: false,
-            mensaje: "No subió una imagen"
+            mensaje: "No subió una imagen",
         });
     }
     const userId = req.user._id;
-    const repose = imageUpload.deleteFilfeTemp(userId, 'profile');
+    const repose = imageUpload.deleteFilfeTemp(userId, "profile");
     const path = yield fileSystem.guardarImageProfile(file, req.user._id);
     console.log(repose);
-    console.log('PHOTO UPDATE USER ID :' + userId);
+    console.log("PHOTO UPDATE USER ID :" + userId);
     res.status(200).send(path);
 }));
 //? GET IMAGE PROFIME
-userRoutes.get('/image/:userId/:img', (req, res) => {
-    console.log('GET:  IMG PROFILE');
+userRoutes.get("/image/:userId/:img", (req, res) => {
+    console.log("GET:  IMG PROFILE");
     const userId = req.params.userId;
-    console.log('USER ID :', userId);
+    console.log("USER ID :", userId);
     const img = req.params.img;
     const pathImg = fileSystem.getFotoUrl(userId, img);
     res.sendFile(pathImg);

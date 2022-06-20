@@ -112,8 +112,6 @@ postRoutes.get('/imagen/:userId/:img', (req: any, res: Response) => {
 });
 
 
-
-
 //! DELETE FILES TEMP
 postRoutes.post('/clearTemp/:userId', (req: any, res: Response) => {
     console.log('GET:  CLEAR IMG TEMP POST');

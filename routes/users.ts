@@ -241,6 +241,47 @@ userRoutes.post("/update", verificaToken, (req: any, res: Response) => {
   );
 });
 
+//? TODO: Update Role User
+userRoutes.post("/update-role", verificaTokenPermis, (req: any, res: Response) => {
+    const userId=req.body.userId;
+    const role=req.body.role;
+    console.log("UPDATE ROLE USER: ", userId, role);
+
+    console.log(req.typeUser);
+    
+    if (req.typeUser != "ADMIN") {
+      res.json({
+        ok: false,
+        message: "Permisos denegados",
+      });
+    }else{
+      User.findByIdAndUpdate(
+        userId, 
+        {type: role}, 
+        {new: true, runValidators: true}, 
+        (err: any, userDB: any) => {
+          if (err) {
+            res.json({
+              ok: false,
+              Error: err,
+            });
+          }
+          if (!userDB) {
+            res.json({
+              ok: false,
+              token: "No existe un usuario",
+            });
+          }
+
+          res.json({
+            ok: true,
+            updateRole: true,
+          });
+        }
+      );
+    }
+});
+
 //Obtener USer
 userRoutes.get("/", verificaToken, (req: any, res: Response) => {
   const usuario = req.user;
@@ -293,16 +334,24 @@ userRoutes.post(
 );
 
 //? Obtener USers for search
-userRoutes.get("/search/:search", async (req: any, res: Response) => {
-  const search = req.params.search;
+userRoutes.post("/search", async (req: any, res: Response) => {
+  const search = req.body.search
+  const tipo=req.body.type;
+  console.log("search: ", search);
+  
   const rgx = (pattern: any) => new RegExp(`.*${pattern}.*`);
   const searchRgx = rgx(search);
+  
   const users = await User.find({
     $or: [
-      { names: { $regex: searchRgx, $options: "i" } },
-      { surnames: { $regex: searchRgx, $options: "i" } },
+      { names: { $regex: '.*'+search , $options: 'i'  } },
+      { surnames: { $regex: '.*'+search+'.*' , $options: 'i' } },
+      {cui: { $regex: '.*'+search+'.*' , $options: 'i' } },
     ],
+    $and: [{ type:{$ne:tipo} }]
   }).exec();
+  console.log("users: ", users);
+  
   res.json({
     ok: true,
     users,

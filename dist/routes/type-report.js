@@ -16,7 +16,7 @@ const typeReportRoutes = (0, express_1.Router)();
 //? GET REPORTS
 typeReportRoutes.get('/', [auth_user_1.verificaToken], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('GET: TYPE REPORT');
-    const typeReports = yield type_report_model_1.TypeReport.find().exec();
+    const typeReports = yield type_report_model_1.TypeReport.find({ status: { $ne: 'INACTIVE' } }).exec();
     res.json({
         ok: true,
         typeReports
@@ -59,6 +59,32 @@ typeReportRoutes.post('/', [auth_user_1.verificaToken], [auth_user_1.verificaTok
 typeReportRoutes.post('/update', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPermis], (req, res) => {
     console.log('UPDATE: TYPE REPORT');
     const body = req.body;
+    if (req.typeUser == 'USER') {
+        res.json({
+            ok: false,
+            message: 'Permisos denegados'
+        });
+    }
+    else {
+        const body = req.body;
+        type_report_model_1.TypeReport.findByIdAndUpdate(body._id, body, { new: true, runValidators: true }, (err, dataDB) => {
+            res.json({
+                ok: true,
+                typeReport: dataDB
+            });
+        }).catch(err => {
+            res.json({
+                ok: false,
+                err
+            });
+        });
+    }
+});
+//! DELETE TYPE REPORT
+typeReportRoutes.post('/update/delete', [auth_user_1.verificaToken], [auth_user_1.verificaTokenPermis], (req, res) => {
+    console.log('DELETE: TYPE REPORT');
+    const body = req.body;
+    body.status = 'INACTIVE';
     if (req.typeUser == 'USER') {
         res.json({
             ok: false,
